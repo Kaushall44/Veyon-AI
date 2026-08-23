@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.venv/
+env/
+venv/
+ENV/
+
+# Documentation
+docs/
+
+# Build Outputs & Bundles
+dist/
+build/
+*.egg-info/
+.tmp/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# System & Environment Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.DS_Store
+Thumbs.db
+DEPLOYMENT.md
+
+# IDE & Editor Configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary & Scratch Files
+scratch/
+*.log

@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-500 selection:text-white;
+  }
+
+  /* Accessibility Keyboard Focus Rings */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-indigo-600 ring-offset-2 ring-offset-white transition-all;
+  }
+}
+
+/* Custom Micro-Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hello Hand Wave Animation */
+@keyframes waveHand {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-8deg); }
+  45% { transform: rotate(14deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: waveHand 2s infinite ease-in-out;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}

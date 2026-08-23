@@ -1,0 +1,12 @@
+{
+  "app_title": "SOA Nexus AI Platform",
+  "dashboard": "Dashboard",
+  "assistant": "AI Assistant",
+  "requests": "My Requests",
+  "approvals": "Approvals Desk",
+  "services": "Services",
+  "book_lab": "Book AI Lab",
+  "request_cert": "Request Certificate",
+  "report_maint": "Report Maintenance",
+  "file_grievance": "File Grievance"
+}

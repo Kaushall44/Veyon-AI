@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="soaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E0E7FF" />
+    </linearGradient>
+  </defs>
+  <!-- Shield Rounded Container -->
+  <rect x="5" y="5" width="90" height="90" rx="28" fill="url(#soaGrad)" />
+  <!-- AI Sparkle Icon -->
+  <path d="M50 22 C50 38, 62 50, 78 50 C62 50, 50 62, 50 78 C50 62, 38 50, 22 50 C38 50, 50 38, 50 22 Z" fill="url(#starGrad)" />
+  <!-- Small Star Accent -->
+  <path d="M72 24 C72 29, 77 33, 82 33 C77 33, 72 37, 72 42 C72 37, 67 33, 62 33 C67 33, 72 29, 72 24 Z" fill="#D9F99D" opacity="0.9" />
+</svg>
