@@ -4,13 +4,21 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-500 selection:text-white;
+    @apply bg-[#FAF9F5] text-[#1B231F] font-sans antialiased selection:bg-[#1E3A2B] selection:text-white;
   }
 
   /* Accessibility Keyboard Focus Rings */
   *:focus-visible {
-    @apply outline-none ring-2 ring-indigo-600 ring-offset-2 ring-offset-white transition-all;
+    @apply outline-none ring-2 ring-[#1E3A2B] ring-offset-2 ring-offset-white transition-all;
   }
+}
+
+.font-serif-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+.font-sans-s1 {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 }
 
 /* Custom Micro-Animations */
@@ -53,14 +61,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: #F5F3EB;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #D9D5C7;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #B8B3A3;
 }

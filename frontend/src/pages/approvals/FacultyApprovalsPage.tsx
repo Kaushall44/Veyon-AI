@@ -156,54 +156,54 @@ export const FacultyApprovalsPage: React.FC = () => {
   const targetTaskForModal = tasks.find((t) => t.id === rejectingTaskId);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans text-[#1B231F] text-left">
       {/* Toast Alert Provider */}
       <Toast toasts={toasts} onDismiss={handleDismissToast} />
 
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-6 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
+      {/* Header Banner (S1 Design System) */}
+      <div className="bg-[#152E22] text-white rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" /> Human-in-the-Loop Approval Engine
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/20 uppercase tracking-widest flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#E8F5E9]" /> Human-in-the-Loop Approval Engine
             </span>
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-serif-title font-bold text-white leading-tight">
             Faculty & Approver Desk
           </h1>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
+          <p className="text-[#8C9C92] text-xs font-medium max-w-xl">
             Review consequential service requests requiring human sign-off. Verified by AI compliance checks.
           </p>
         </div>
 
         {/* Quick Filter Pill Tabs */}
-        <div className="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/80 shrink-0">
+        <div className="flex items-center gap-2 bg-white/10 p-1.5 rounded-full border border-white/20 shrink-0">
           <button
             onClick={() => setActiveFilter('PENDING')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               activeFilter === 'PENDING'
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-white text-[#152E22] shadow-xs'
+                : 'text-white/80 hover:text-white'
             }`}
           >
             Pending ({pendingCount})
           </button>
           <button
             onClick={() => setActiveFilter('DECIDED')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               activeFilter === 'DECIDED'
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-white text-[#152E22] shadow-xs'
+                : 'text-white/80 hover:text-white'
             }`}
           >
             Decided
           </button>
           <button
             onClick={() => setActiveFilter('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               activeFilter === 'ALL'
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-white text-[#152E22] shadow-xs'
+                : 'text-white/80 hover:text-white'
             }`}
           >
             All Tasks
@@ -214,10 +214,10 @@ export const FacultyApprovalsPage: React.FC = () => {
       {/* Task Queue List */}
       <div className="space-y-4">
         {filteredTasks.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
-            <h3 className="font-bold text-slate-900 text-sm">No Pending Approvals</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <div className="bg-white rounded-3xl border border-[#EAE7DF] p-12 text-center space-y-3 shadow-xs">
+            <CheckCircle2 className="w-12 h-12 text-[#2E7D32] mx-auto" />
+            <h3 className="font-serif-title font-bold text-[#1B231F] text-xl">No Pending Approvals</h3>
+            <p className="text-xs text-[#5A6E63] max-w-sm mx-auto">
               All high-risk service requests have been reviewed and decided.
             </p>
           </div>

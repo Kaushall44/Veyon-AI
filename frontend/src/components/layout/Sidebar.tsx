@@ -1,16 +1,16 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
-  Bot, 
-  FileCheck2, 
-  ShieldCheck, 
-  Shield, 
-  Database,
-  ChevronRight,
-  Activity,
+  Home, 
+  Clock, 
+  Grid, 
+  ShieldAlert, 
+  FileText, 
+  Bell, 
+  ChevronRight, 
   X,
-  Sparkles
+  UserCheck,
+  Bot
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types/auth';
@@ -19,7 +19,6 @@ interface NavItem {
   label: string;
   path: string;
   icon: React.ElementType;
-  badge?: string;
   allowedRoles?: Role[];
 }
 
@@ -34,46 +33,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
   const userRole = user?.role || 'Student';
 
   const allNavItems: NavItem[] = [
+    { label: 'Home', path: '/dashboard', icon: Home },
+    { label: 'AI Assistant', path: '/assistant', icon: Bot },
+    { label: 'My Requests', path: '/requests', icon: Clock },
+    { label: 'Services', path: '/services/lab-booking', icon: Grid },
+    { label: 'Grievances', path: '/services/grievance', icon: ShieldAlert },
+    { label: 'Documents', path: '/services/certificate', icon: FileText },
     { 
-      label: 'Dashboard', 
-      path: '/dashboard', 
-      icon: LayoutDashboard 
-    },
-    { 
-      label: 'AI Assistant', 
-      path: '/assistant', 
-      icon: Bot, 
-      badge: 'Copilot',
-      allowedRoles: ['Student', 'Faculty', 'Lab_In_Charge', 'Admin', 'Super_Admin']
-    },
-    { 
-      label: 'My Requests', 
-      path: '/requests', 
-      icon: FileCheck2 
-    },
-    { 
-      label: userRole === 'Lab_In_Charge' ? 'Lab Approvals' : 'Approvals Desk', 
+      label: userRole === 'Lab_In_Charge' ? 'Approvals' : 'Approvals Desk', 
       path: '/approvals', 
-      icon: ShieldCheck, 
-      badge: '1 Pending',
+      icon: UserCheck, 
       allowedRoles: ['Faculty', 'Lab_In_Charge', 'Admin', 'Super_Admin']
     },
     { 
-      label: 'Admin Overview', 
+      label: 'Admin Console', 
       path: '/admin', 
-      icon: Activity,
-      allowedRoles: ['Admin', 'Super_Admin']
-    },
-    { 
-      label: 'Audit Console', 
-      path: '/audit', 
-      icon: Shield,
-      allowedRoles: ['Admin', 'Super_Admin']
-    },
-    { 
-      label: 'Knowledge Base', 
-      path: '/knowledge', 
-      icon: Database,
+      icon: ShieldAlert, 
       allowedRoles: ['Admin', 'Super_Admin']
     },
   ];
@@ -84,49 +59,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
   });
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-slate-950 text-slate-100 border-r border-slate-800/80 font-sans">
-      {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-indigo-700 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div>
-            <h1 className="font-extrabold text-sm text-white tracking-tight leading-tight">
-              SOA <span className="text-indigo-400">Nexus</span>
-            </h1>
-            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">
-              AI Governance Hub
-            </p>
+    <div className="flex flex-col h-full bg-[#FAF9F5] text-[#1B231F] border-r border-[#EAE7DF] font-sans">
+      {/* S1 Brand Header (Exact Match to Image 3) */}
+      <div className="p-6 border-b border-[#EAE7DF] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-serif-title text-3xl font-bold tracking-tight text-[#152E22]">S1</span>
+          <div className="space-y-0.5 border-l border-[#D9D5C7] pl-2.5">
+            <span className="text-[10px] font-bold tracking-widest text-[#5A6E63] uppercase block leading-tight">
+              SERVICE DIRECTORY
+            </span>
           </div>
         </div>
 
         {onCloseMobile && (
-          <button onClick={onCloseMobile} className="lg:hidden p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800">
+          <button onClick={onCloseMobile} className="lg:hidden p-1.5 rounded-lg text-[#5A6E63] hover:bg-[#EFECE3]">
             <X className="w-5 h-5" />
           </button>
         )}
       </div>
 
-      {/* Role Context Pill */}
-      <div className="px-4 pt-4 pb-2">
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex items-center justify-between shadow-xs">
-          <div className="min-w-0 space-y-0.5">
-            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Active Mode</span>
-            <span className="text-xs font-bold text-indigo-300 truncate block">{userRole}</span>
-          </div>
-          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-            Online
-          </span>
-        </div>
-      </div>
-
-      {/* Navigation List */}
-      <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
-        <div className="px-3 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-          Platform Services
-        </div>
+      {/* Navigation Links */}
+      <nav className="flex-1 px-4 py-5 space-y-1.5 overflow-y-auto">
         {visibleNavItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -135,10 +88,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
               to={item.path}
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-150 ${
+                `flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/25'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                    ? 'bg-[#EFECE3] text-[#152E22] shadow-xs'
+                    : 'text-[#5A6E63] hover:text-[#1B231F] hover:bg-[#F3F0E6]'
                 }`
               }
             >
@@ -146,45 +99,63 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
                 <Icon className="w-4 h-4 shrink-0" />
                 <span>{item.label}</span>
               </div>
-              {item.badge ? (
-                <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-indigo-300 font-bold border border-slate-700/80">
-                  {item.badge}
-                </span>
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 opacity-30 group-hover:opacity-70" />
-              )}
+              <ChevronRight className="w-3.5 h-3.5 opacity-30" />
             </NavLink>
           );
         })}
       </nav>
 
-      {/* Institution Footer */}
-      <div className="p-4 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
-        <p className="font-semibold text-slate-200">SIH 2026 • SOA University</p>
-        <p className="text-[10px] text-slate-500 font-mono">ID: SOAIDEATHON-S1</p>
+      {/* Queue Counter Status Pill (Exact Match to Image 3) */}
+      <div className="px-5 py-3 border-t border-[#EAE7DF]">
+        <div className="text-[11px] font-bold text-[#5A6E63] uppercase tracking-wider block mb-1">
+          QUEUE STATUS
+        </div>
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#152E22]">
+          <span className="w-2 h-2 rounded-full bg-[#2E7D32] animate-pulse"></span>
+          <span>Counter open</span>
+        </div>
+      </div>
+
+      {/* User Profile Card at Bottom (Exact Match to Image 3) */}
+      <div className="p-4 border-t border-[#EAE7DF] bg-[#FAF8F3]">
+        <div className="bg-white border border-[#E5E2D9] rounded-2xl p-3 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-full bg-[#E5E2D9] text-[#152E22] font-bold text-xs flex items-center justify-center shrink-0">
+              KR
+            </div>
+            <div className="min-w-0">
+              <span className="font-bold text-xs text-[#1B231F] truncate block">
+                {user?.name || 'Kaushal Raj Gupta'}
+              </span>
+              <span className="text-[10px] text-[#5A6E63] font-medium block truncate">
+                2023-CSE-042
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 
   return (
     <>
-      {/* 1. Desktop Sidebar */}
+      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 shrink-0 min-h-screen flex-col">
         {sidebarContent}
       </aside>
 
-      {/* 2. Mobile Slide-out Drawer Overlay */}
+      {/* Mobile Slide-out Drawer */}
       {isMobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onClick={onCloseMobile}></div>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs" onClick={onCloseMobile}></div>
           <div className="relative w-72 max-w-[80vw] h-full shadow-2xl z-10 animate-fade-in">
             {sidebarContent}
           </div>
         </div>
       )}
 
-      {/* 3. Mobile Bottom Navigation Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 text-white px-2 py-1.5 flex items-center justify-around shadow-2xl">
+      {/* Mobile Bottom Navigation Strip */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FAF9F5] border-t border-[#EAE7DF] px-2 py-2 flex items-center justify-around shadow-lg">
         {visibleNavItems.slice(0, 5).map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -192,12 +163,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
             <NavLink
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-2xl text-[10px] font-bold transition-all ${
-                isActive ? 'text-indigo-400 bg-indigo-950/80' : 'text-slate-400 hover:text-slate-200'
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-[10px] font-bold transition-all ${
+                isActive ? 'text-[#152E22] bg-[#EFECE3]' : 'text-[#5A6E63] hover:text-[#1B231F]'
               }`}
             >
               <Icon className="w-4 h-4" />
-              <span className="truncate max-w-[64px]">{item.label.split(' ')[0]}</span>
+              <span className="truncate max-w-[64px]">{item.label}</span>
             </NavLink>
           );
         })}

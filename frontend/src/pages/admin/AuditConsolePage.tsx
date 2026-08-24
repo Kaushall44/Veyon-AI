@@ -157,19 +157,19 @@ export const AuditConsolePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-6 sm:p-8 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans text-[#1B231F] text-left">
+      {/* Header Banner (S1 Design System) */}
+      <div className="bg-[#152E22] text-white rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" /> Admin Audit Console
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/20 uppercase tracking-widest flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#E8F5E9]" /> Admin Audit Console
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-serif-title font-bold text-white leading-tight">
             Immutable Audit Trail & AI Provenance
           </h1>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
+          <p className="text-[#8C9C92] text-xs font-medium max-w-xl">
             Inspect 100% of user prompts, intent scores, policy RAG passages, ReAct execution plans, HITL approvals, and tool execution payloads.
           </p>
         </div>
@@ -177,13 +177,13 @@ export const AuditConsolePage: React.FC = () => {
         <div className="flex gap-2 shrink-0">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all flex items-center gap-2"
           >
             <Download className="w-3.5 h-3.5" /> Export CSV
           </button>
           <button
             onClick={handleExportJSON}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5"
+            className="px-5 py-2.5 rounded-full bg-white text-[#152E22] hover:bg-[#FAF8F3] text-xs font-bold shadow-xs transition-all flex items-center gap-2"
           >
             <Download className="w-3.5 h-3.5" /> Export JSON
           </button>
@@ -191,27 +191,27 @@ export const AuditConsolePage: React.FC = () => {
       </div>
 
       {/* Filter & Search Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-card">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-[#EAE7DF] shadow-xs">
         {/* Search Bar */}
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-[#8C9C92] absolute left-3.5 top-3" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search audit ID, summary, or prompt..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full bg-[#FAF8F3] border border-[#D9D5C7] rounded-full pl-9 pr-4 py-2 text-xs text-[#1B231F] placeholder-[#8C9C92] outline-none focus:border-[#152E22] font-medium"
           />
         </div>
 
         {/* Event Type Filter */}
         <div className="flex items-center gap-2 text-xs w-full sm:w-auto">
-          <Filter className="w-4 h-4 text-slate-400 shrink-0" />
-          <span className="font-bold text-slate-700 shrink-0">Event Type:</span>
+          <Filter className="w-4 h-4 text-[#8C9C92] shrink-0" />
+          <span className="font-bold text-[#1B231F] shrink-0">Event Type:</span>
           <select
             value={selectedEventType}
             onChange={(e) => setSelectedEventType(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-800 focus:outline-none w-full sm:w-auto"
+            className="bg-[#FAF8F3] border border-[#D9D5C7] rounded-full px-4 py-2 font-bold text-[#152E22] focus:outline-none w-full sm:w-auto"
           >
             <option value="ALL">All Event Types (50 Logs)</option>
             <option value="CHAT_PROMPT">CHAT_PROMPT</option>
@@ -225,45 +225,45 @@ export const AuditConsolePage: React.FC = () => {
       </div>
 
       {/* Audit Log Table */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-card">
+      <div className="bg-white border border-[#EAE7DF] rounded-3xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+          <table className="w-full text-left text-xs min-w-[700px]">
+            <thead className="bg-[#FAF8F3] text-[#5A6E63] uppercase tracking-wider font-bold border-b border-[#EAE7DF]">
               <tr>
-                <th className="p-4">Audit ID</th>
+                <th className="p-4 sm:px-6">Audit ID</th>
                 <th className="p-4">Timestamp</th>
                 <th className="p-4">Actor</th>
                 <th className="p-4">Event Type</th>
                 <th className="p-4">Action Summary</th>
-                <th className="p-4 text-right">Provenance</th>
+                <th className="p-4 sm:pr-6 text-right">Provenance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
+            <tbody className="divide-y divide-[#EAE7DF] font-medium">
               {filteredLogs.map((log) => (
-                <tr key={log.audit_id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="p-4 font-mono font-extrabold text-slate-900">{log.audit_id}</td>
-                  <td className="p-4 text-slate-500 font-mono text-[11px] whitespace-nowrap">{log.timestamp}</td>
-                  <td className="p-4 font-semibold text-slate-800">{log.actor_id}</td>
+                <tr key={log.audit_id} className="hover:bg-[#FAF8F3] transition-colors">
+                  <td className="p-4 sm:px-6 font-mono font-bold text-[#152E22]">{log.audit_id}</td>
+                  <td className="p-4 text-[#8C9C92] font-mono text-[11px] whitespace-nowrap">{log.timestamp}</td>
+                  <td className="p-4 font-bold text-[#1B231F]">{log.actor_id}</td>
                   <td className="p-4">
                     <span
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                      className={`px-3 py-1 rounded-full text-[10px] font-bold border ${
                         log.event_type === 'TOOL_EXECUTED'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                          ? 'bg-[#E8F5E9] text-[#2E7D32] border-[#C8E6C9]'
                           : log.event_type === 'HITL_APPROVAL_GRANTED'
-                          ? 'bg-indigo-50 text-indigo-700 border-indigo-300'
+                          ? 'bg-[#E8EAF6] text-[#283593] border-[#C5CAE9]'
                           : log.event_type === 'RAG_RETRIEVAL'
-                          ? 'bg-purple-50 text-purple-700 border-purple-300'
-                          : 'bg-slate-100 text-slate-700 border-slate-300'
+                          ? 'bg-[#F3E5F5] text-[#6A1B9A] border-[#E1BEE7]'
+                          : 'bg-[#EFECE3] text-[#5A6E63] border-[#D9D5C7]'
                       }`}
                     >
                       {log.event_type}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-700 max-w-md truncate">{log.action_summary}</td>
-                  <td className="p-4 text-right">
+                  <td className="p-4 text-[#5A6E63] max-w-md truncate">{log.action_summary}</td>
+                  <td className="p-4 sm:pr-6 text-right">
                     <button
                       onClick={() => setInspectRecord(log)}
-                      className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold border border-indigo-200 transition-all inline-flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 rounded-full bg-[#FAF8F3] hover:bg-[#EFECE3] text-[#152E22] font-bold border border-[#E5E2D9] transition-all inline-flex items-center gap-1.5 cursor-pointer"
                     >
                       <Code2 className="w-3.5 h-3.5" /> Inspect JSON
                     </button>

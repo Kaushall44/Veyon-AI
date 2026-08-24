@@ -75,26 +75,26 @@ export const MaintenancePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 text-white rounded-2xl p-6 sm:p-8 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans text-[#1B231F] text-left">
+      {/* Header Banner (S1 Design System) */}
+      <div className="bg-[#152E22] text-white rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider flex items-center gap-1.5">
-              <Wrench className="w-3.5 h-3.5 text-amber-400" /> Infrastructure Maintenance Portal
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/20 uppercase tracking-widest flex items-center gap-1.5">
+              <Wrench className="w-3.5 h-3.5 text-[#E8F5E9]" /> Infrastructure Maintenance Portal
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-serif-title font-bold text-white leading-tight">
             Campus Infrastructure Maintenance Ticketing
           </h1>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
+          <p className="text-[#8C9C92] text-xs font-medium max-w-xl">
             Report HVAC, electrical, plumbing, or classroom furniture complaints with auto-priority matrix classification and Estates staff dispatch.
           </p>
         </div>
 
         <button
           onClick={() => navigate('/assistant', { state: { initialPrompt: 'The AC in C-Block Room 302 is leaking water and making noise.' } })}
-          className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0"
+          className="px-5 py-2.5 rounded-full bg-white text-[#152E22] hover:bg-[#FAF8F3] text-xs font-bold shadow-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer"
         >
           <Sparkles className="w-4 h-4" />
           <span>Report via AI Copilot</span>
@@ -104,16 +104,16 @@ export const MaintenancePage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Issue Submission Form */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-4">
-            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Report Campus Infrastructure Issue</h2>
+          <div className="bg-white rounded-3xl border border-[#EAE7DF] p-6 sm:p-8 shadow-xs space-y-4">
+            <h2 className="text-xs font-bold text-[#1B231F] uppercase tracking-wider">Report Campus Infrastructure Issue</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Campus Location / Room</label>
+                <label className="block font-bold text-[#1B231F] mb-1">Campus Location / Room</label>
                 <select
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full bg-[#FAF8F3] border border-[#D9D5C7] rounded-xl p-3 text-xs text-[#1B231F] font-semibold outline-none focus:border-[#152E22]"
                 >
                   <option value="C-Block Room 302">C-Block Room 302 (Classroom)</option>
                   <option value="C-Block 2nd Floor GPU Lab">C-Block 2nd Floor GPU Lab</option>
@@ -123,11 +123,11 @@ export const MaintenancePage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Infrastructure Category</label>
+                <label className="block font-bold text-[#1B231F] mb-1">Infrastructure Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full bg-[#FAF8F3] border border-[#D9D5C7] rounded-xl p-3 text-xs text-[#1B231F] font-semibold outline-none focus:border-[#152E22]"
                 >
                   <option value="HVAC">HVAC & Air Conditioning</option>
                   <option value="ELECTRICAL">Electrical & Lighting</option>
@@ -138,32 +138,32 @@ export const MaintenancePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Detailed Issue Description</label>
+              <label className="block text-xs font-bold text-[#1B231F] mb-1">Detailed Issue Description</label>
               <textarea
                 rows={3}
                 value={issueDescription}
                 onChange={(e) => setIssueDescription(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full bg-[#FAF8F3] border border-[#D9D5C7] rounded-xl p-3 text-xs text-[#1B231F] outline-none focus:border-[#152E22]"
               />
             </div>
 
             {/* Simulated Photo Upload Component */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700">Attach Repair Photo (Simulated)</label>
-              <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 flex items-center justify-between">
+              <label className="block text-xs font-bold text-[#1B231F]">Attach Repair Photo (Simulated)</label>
+              <div className="p-4 rounded-2xl bg-[#FAF8F3] border border-dashed border-[#D9D5C7] flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#FFF8E1] text-[#F57F17] flex items-center justify-center">
                     <Camera className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-slate-800 block">AC_Leakage_Room302.jpg</span>
-                    <span className="text-[10px] text-slate-500">1.2 MB • Photo attached</span>
+                    <span className="text-xs font-bold text-[#1B231F] block">AC_Leakage_Room302.jpg</span>
+                    <span className="text-[10px] text-[#5A6E63]">1.2 MB • Photo attached</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => alert('Photo uploaded successfully!')}
-                  className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-100 flex items-center gap-1"
+                  className="px-3.5 py-1.5 rounded-full bg-white border border-[#E5E2D9] text-[#152E22] text-xs font-bold hover:bg-[#FAF8F3] flex items-center gap-1 cursor-pointer"
                 >
                   <UploadCloud className="w-3.5 h-3.5" /> Re-upload
                 </button>
@@ -171,15 +171,11 @@ export const MaintenancePage: React.FC = () => {
             </div>
 
             {/* Auto Priority Classification Banner */}
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between text-xs">
-              <span className="font-semibold text-amber-900 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600" /> Auto-Priority Matrix Rating:
+            <div className="p-3.5 rounded-2xl bg-[#FFF8E1] border border-[#FFE082] flex items-center justify-between text-xs">
+              <span className="font-semibold text-[#E65100] flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-[#F57F17]" /> Auto-Priority Matrix Rating:
               </span>
-              <span className={`px-2.5 py-0.5 rounded-full font-bold text-xs ${
-                computedPriority === 'Urgent'
-                  ? 'bg-red-100 text-red-700 border border-red-300'
-                  : 'bg-amber-100 text-amber-800 border border-amber-300'
-              }`}>
+              <span className="px-3 py-1 rounded-full font-bold text-xs bg-[#F57F17] text-white">
                 {computedPriority} Priority
               </span>
             </div>
@@ -187,7 +183,7 @@ export const MaintenancePage: React.FC = () => {
             <div className="pt-2 flex justify-end">
               <button
                 onClick={handleCreateTicket}
-                className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-[#152E22] hover:bg-[#1E3A2B] text-white text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Submit Ticket & Dispatch Estates Team</span> <ArrowRight className="w-4 h-4" />
               </button>
@@ -200,16 +196,16 @@ export const MaintenancePage: React.FC = () => {
               <ActionPlanCard plan={demoActionPlan} />
 
               {/* Technician & Estates Staff Control Banner */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-card space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <Wrench className="w-4 h-4 text-amber-600" /> Technician Dispatch Control (Staff Desk)
+              <div className="p-5 rounded-3xl bg-white border border-[#EAE7DF] shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <span className="text-xs font-bold text-[#1B231F] uppercase tracking-wider flex items-center gap-2">
+                    <Wrench className="w-4 h-4 text-[#152E22]" /> Technician Dispatch Control (Staff Desk)
                   </span>
                   <div className="flex gap-2">
                     {ticketStatus === 'CREATED' && (
                       <button
                         onClick={handleSimulateStaffStartRepair}
-                        className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-all"
+                        className="px-4 py-1.5 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
                       >
                         Start Repair (In Progress)
                       </button>
@@ -217,7 +213,7 @@ export const MaintenancePage: React.FC = () => {
                     {ticketStatus === 'IN_PROGRESS' && (
                       <button
                         onClick={handleSimulateStaffResolve}
-                        className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-1"
+                        className="px-4 py-1.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" /> Mark Resolved
                       </button>
@@ -226,9 +222,9 @@ export const MaintenancePage: React.FC = () => {
                 </div>
 
                 {resolutionNotes && (
-                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-[#E8F5E9] border border-[#C8E6C9] text-xs text-[#2E7D32] space-y-1">
                     <span className="font-bold block">Technician Resolution Proof Notes:</span>
-                    <p className="text-[11px] text-emerald-800">{resolutionNotes}</p>
+                    <p className="text-[11px] text-[#2E7D32]">{resolutionNotes}</p>
                   </div>
                 )}
               </div>
@@ -238,70 +234,65 @@ export const MaintenancePage: React.FC = () => {
 
         {/* Right Column: Interactive Ticket Card with Progress Bar */}
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-card space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-white rounded-3xl border border-[#EAE7DF] p-6 shadow-xs space-y-5">
+            <div className="flex items-center justify-between border-b border-[#EAE7DF] pb-3">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Maintenance Ticket</span>
-                <h3 className="font-mono font-extrabold text-slate-900 text-base">#{ticketId}</h3>
+                <span className="text-[10px] font-bold text-[#8C9C92] uppercase tracking-wider block">Maintenance Ticket</span>
+                <h3 className="font-mono font-bold text-[#152E22] text-base">#{ticketId}</h3>
               </div>
-              <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+              <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                 ticketStatus === 'RESOLVED'
-                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                  ? 'bg-[#E8F5E9] text-[#2E7D32] border-[#C8E6C9]'
                   : ticketStatus === 'IN_PROGRESS'
-                  ? 'bg-indigo-100 text-indigo-800 border border-indigo-300'
-                  : 'bg-amber-100 text-amber-800 border border-amber-300'
+                  ? 'bg-[#E8EAF6] text-[#283593] border-[#C5CAE9]'
+                  : 'bg-[#FFF8E1] text-[#F57F17] border-[#FFE082]'
               }`}>
                 {ticketStatus === 'RESOLVED' ? 'Resolved' : ticketStatus === 'IN_PROGRESS' ? 'In Progress' : 'New'}
               </span>
             </div>
 
             {/* Campus Map Location Badge */}
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-[#FAF8F3] border border-[#E5E2D9] space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#1B231F]">
+                <MapPin className="w-4 h-4 text-[#152E22] shrink-0" />
                 <span>{location}</span>
               </div>
-              <p className="text-[11px] text-slate-500">{issueDescription}</p>
+              <p className="text-[11px] text-[#5A6E63]">{issueDescription}</p>
             </div>
 
             {/* Status Progress Bar */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
+              <div className="flex items-center justify-between text-[11px] font-bold text-[#5A6E63]">
                 <span>Status Progress</span>
-                <span className="text-amber-700">
+                <span className="text-[#152E22]">
                   {ticketStatus === 'RESOLVED' ? '100% Completed' : ticketStatus === 'IN_PROGRESS' ? '50% In Progress' : '15% Submitted'}
                 </span>
               </div>
-              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-[#FAF8F3] border border-[#E5E2D9] rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all duration-500 ${
                     ticketStatus === 'RESOLVED'
-                      ? 'bg-emerald-500 w-full'
+                      ? 'bg-[#2E7D32] w-full'
                       : ticketStatus === 'IN_PROGRESS'
-                      ? 'bg-indigo-500 w-1/2'
-                      : 'bg-amber-500 w-1/6'
+                      ? 'bg-[#2563EB] w-1/2'
+                      : 'bg-[#F57F17] w-1/6'
                   }`}
                 />
-              </div>
-              <div className="flex justify-between text-[10px] text-slate-400 font-semibold pt-1">
-                <span>1. New</span>
-                <span>2. In Progress</span>
-                <span>3. Resolved</span>
               </div>
             </div>
 
             {/* Technician Avatar & Details */}
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <div className="pt-2 border-t border-[#EAE7DF] flex items-center justify-between text-xs">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-xs">
+                <div className="w-9 h-9 rounded-full bg-[#152E22] text-white font-bold flex items-center justify-center text-xs">
                   RK
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 text-xs">Rajesh Kumar</h4>
-                  <p className="text-[10px] text-slate-500">HVAC Senior Lead (Estates)</p>
+                  <h4 className="font-bold text-[#1B231F] text-xs">Rajesh Kumar</h4>
+                  <p className="text-[10px] text-[#5A6E63]">HVAC Senior Lead (Estates)</p>
                 </div>
               </div>
-              <span className="text-[10px] text-slate-400 font-mono">Estates Team</span>
+              <span className="text-[10px] text-[#8C9C92] font-mono font-bold">Estates Team</span>
             </div>
           </div>
         </div>

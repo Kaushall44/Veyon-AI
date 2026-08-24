@@ -11,6 +11,7 @@ import { AuditPage } from '../pages/AuditPage';
 import { KnowledgePage } from '../pages/KnowledgePage';
 import { AdminDashboard } from '../pages/admin/AdminDashboard';
 import { LoginPage } from '../pages/auth/LoginPage';
+import { ServicesDirectoryPage } from '../pages/services/ServicesDirectoryPage';
 import { LabBookingPage } from '../pages/services/LabBookingPage';
 import { CertificatePage } from '../pages/services/CertificatePage';
 import { MaintenancePage } from '../pages/services/MaintenancePage';
@@ -37,6 +38,8 @@ export const AppRoutes: React.FC = () => {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/assistant" element={<AssistantPage />} />
         <Route path="/requests" element={<RequestsPage />} />
+        <Route path="/services" element={<ServicesDirectoryPage />} />
+        <Route path="/services/directory" element={<ServicesDirectoryPage />} />
         <Route path="/services/lab-booking" element={<LabBookingPage />} />
         <Route path="/services/certificate" element={<CertificatePage />} />
         <Route path="/services/maintenance" element={<MaintenancePage />} />
