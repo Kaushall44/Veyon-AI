@@ -83,13 +83,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-[#FAF9F5] text-[#1B231F] border-r border-[#EAE7DF] font-sans">
-      {/* S1 Brand Header */}
-      <div className="p-6 border-b border-[#EAE7DF] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-serif-title text-3xl font-bold tracking-tight text-[#152E22]">S1</span>
-          <div className="space-y-0.5 border-l border-[#D9D5C7] pl-2.5">
-            <span className="text-[10px] font-bold tracking-widest text-[#5A6E63] uppercase block leading-tight">
-              SERVICE DIRECTORY
+      {/* Veyon Brand Header */}
+      <div className="p-5 sm:p-6 border-b border-[#EAE7DF] flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src="/veyon_logo.png"
+            alt="Veyon Logo"
+            className="w-9 h-9 object-contain shrink-0 rounded-xl"
+            onError={(e) => {
+              // Fallback to text if image fails to render
+              (e.currentTarget as HTMLElement).style.display = 'none';
+            }}
+          />
+          <div className="space-y-0.5">
+            <span className="font-serif-title text-2xl sm:text-3xl font-bold tracking-tight text-[#152E22] block leading-none">
+              Veyon
+            </span>
+            <span className="text-[9px] font-bold tracking-widest text-[#5A6E63] uppercase block">
+              AGENTIC PLATFORM
             </span>
           </div>
         </div>
@@ -163,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 shrink-0 min-h-screen flex-col">
+      <aside className="hidden lg:flex w-64 shrink-0 h-full flex-col">
         {sidebarContent}
       </aside>
 

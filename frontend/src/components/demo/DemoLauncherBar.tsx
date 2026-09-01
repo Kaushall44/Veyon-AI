@@ -61,8 +61,8 @@ export const DemoLauncherBar: React.FC<DemoLauncherBarProps> = ({ onShowToast })
           
           <div className="flex items-center gap-2 min-w-0">
             <span className="bg-gradient-to-r from-indigo-300 via-purple-300 to-lime-300 bg-clip-text text-transparent font-extrabold tracking-wider text-[11px] truncate">
-              <span className="sm:hidden">Judge Bar</span>
-              <span className="hidden sm:inline">SOA Nexus Hackathon Judge Bar</span>
+              <span className="sm:hidden">Veyon Switcher</span>
+              <span className="hidden sm:inline">Veyon AI Persona &amp; Judge Switcher</span>
             </span>
 
             <span className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/80 shrink-0">

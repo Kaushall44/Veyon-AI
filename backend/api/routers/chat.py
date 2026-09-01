@@ -113,6 +113,37 @@ async def process_chat(request: ChatRequest, db: Session = Depends(get_sync_db))
         for c in citations
     ]
 
+    # Persist chat telemetry to Supabase
+    try:
+        from backend.database.supabase_client import supabase_insert
+        import uuid as _uuid
+        conv_id = str(_uuid.uuid4())
+        supabase_insert("conversations", {
+            "id": conv_id,
+            "user_id": "20000000-0000-0000-0000-000000000001",
+            "title": prompt[:50]
+        })
+        supabase_insert("messages", {
+            "id": str(_uuid.uuid4()),
+            "conversation_id": conv_id,
+            "sender_type": "USER",
+            "text_content": prompt,
+            "metadata_json": {"role": user_role, "language": language}
+        })
+        supabase_insert("messages", {
+            "id": str(_uuid.uuid4()),
+            "conversation_id": conv_id,
+            "sender_type": "ASSISTANT",
+            "text_content": response_msg,
+            "metadata_json": {
+                "intent": intent,
+                "confidence": plan_data.get("confidence", 0.95),
+                "is_uncertainty": is_uncertainty
+            }
+        })
+    except Exception:
+        pass
+
     return ChatResponse(
         response_type="UNCERTAINTY_REFUSAL" if is_uncertainty else "INTENT_CLASSIFIED",
         message=response_msg,

@@ -162,18 +162,18 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <div className="flex items-center justify-center gap-3 pt-1">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-0.5 shadow-lg shadow-indigo-500/25">
-              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                <Bot className="w-6 h-6 text-indigo-400" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-indigo-200">
-              SOA Nexus
+            <img
+              src="/veyon_logo.png"
+              alt="Veyon Logo"
+              className="w-12 h-12 object-contain rounded-2xl shadow-lg shadow-indigo-500/25"
+            />
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-indigo-200 font-serif-title">
+              Veyon
             </h1>
           </div>
 
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Autonomous Institutional Service Gateway with Deterministic Governance & Supabase Auth
+            Autonomous Institutional AI Service Platform with Deterministic Human-in-the-Loop Governance
           </p>
         </div>
 

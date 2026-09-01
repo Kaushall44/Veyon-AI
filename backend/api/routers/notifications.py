@@ -76,12 +76,31 @@ class MarkReadPayload(BaseModel):
 def broadcast_notification_sync(notif: Dict[str, Any]):
     """
     Thread-safe synchronous helper to push real-time notifications to all SSE subscribers.
+    Uses call_soon_threadsafe to safely enqueue on asyncio Queues from sync context.
     """
-    for queue in list(NOTIFICATION_LISTENERS):
-        try:
-            queue.put_nowait(notif)
-        except Exception:
-            pass
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            for queue in list(NOTIFICATION_LISTENERS):
+                try:
+                    loop.call_soon_threadsafe(queue.put_nowait, notif)
+                except Exception as e:
+                    logger.debug(f"SSE broadcast to listener failed: {e}")
+        else:
+            # If no running loop, try direct put_nowait
+            for queue in list(NOTIFICATION_LISTENERS):
+                try:
+                    queue.put_nowait(notif)
+                except Exception:
+                    pass
+    except RuntimeError:
+        # No event loop at all, try direct put
+        for queue in list(NOTIFICATION_LISTENERS):
+            try:
+                queue.put_nowait(notif)
+            except Exception:
+                pass
+    logger.info(f"SSE broadcast to {len(NOTIFICATION_LISTENERS)} listeners: {notif.get('title', 'N/A')}")
 
 async def broadcast_notification_async(notif: Dict[str, Any]):
     """

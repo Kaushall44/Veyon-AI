@@ -18,6 +18,7 @@ import {
   QrCode
 } from 'lucide-react';
 import { requestsService, ServiceRequestItem } from '../services/api/requestsService';
+import { notificationsService } from '../services/api/notificationsService';
 import { DigitalAccessPass } from '../components/services/DigitalAccessPass';
 
 export const RequestsPage: React.FC = () => {
@@ -43,6 +44,15 @@ export const RequestsPage: React.FC = () => {
 
   useEffect(() => {
     fetchRequests();
+
+    // Real-time synchronization when any approval or notification arrives
+    const unsubscribe = notificationsService.subscribeToSSE(() => {
+      fetchRequests();
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [typeFilter, statusFilter]);
 
   const getStatusBadge = (status: string) => {
@@ -347,6 +357,26 @@ export const RequestsPage: React.FC = () => {
                   >
                     <QrCode className="w-4 h-4" />
                     <span>View &amp; Print Signed Digital Access Pass</span>
+                  </button>
+                </div>
+              )}
+
+              {/* If Approved Certificate, show Certificate Button */}
+              {selectedRequest.request_type === 'CERTIFICATE' && (selectedRequest.status === 'APPROVED' || selectedRequest.status === 'COMPLETED') && (
+                <div className="p-4 rounded-2xl bg-[#E8F5E9] border border-[#C8E6C9] space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#2E7D32]">
+                    <FileText className="w-4 h-4 text-[#2E7D32]" />
+                    <span>Official Bonafide Certificate Ready</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedRequest(null);
+                      navigate('/services/certificate');
+                    }}
+                    className="w-full py-2.5 rounded-full bg-[#152E22] hover:bg-[#1E3A2B] text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>View &amp; Download Signed Certificate PDF</span>
                   </button>
                 </div>
               )}

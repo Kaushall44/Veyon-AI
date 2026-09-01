@@ -3,8 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     @apply bg-[#FAF9F5] text-[#1B231F] font-sans antialiased selection:bg-[#1E3A2B] selection:text-white;
+  }
+
+  #root {
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
   }
 
   /* Accessibility Keyboard Focus Rings */
@@ -19,6 +32,15 @@
 
 .font-sans-s1 {
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+}
+
+/* 3D Perspective & Depth Helpers */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
 }
 
 /* Custom Micro-Animations */
@@ -37,21 +59,57 @@
   animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Hello Hand Wave Animation */
-@keyframes waveHand {
-  0% { transform: rotate(0deg); }
-  15% { transform: rotate(14deg); }
-  30% { transform: rotate(-8deg); }
-  45% { transform: rotate(14deg); }
-  60% { transform: rotate(-4deg); }
-  75% { transform: rotate(10deg); }
-  100% { transform: rotate(0deg); }
+/* Traveling Dot Animation along SVG Flow */
+@keyframes travelPath {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
-.animate-wave {
-  display: inline-block;
-  transform-origin: 70% 70%;
-  animation: waveHand 2s infinite ease-in-out;
+.animate-flow-dash {
+  stroke-dasharray: 6 6;
+  animation: travelPath 1.2s linear infinite;
+}
+
+/* Node Ping Animation */
+@keyframes nodePing {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.animate-node-pulse {
+  animation: nodePing 3s ease-in-out infinite;
+}
+
+/* Accessibility: Strict Reduced-Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-flow-dash,
+  .animate-node-pulse,
+  .animate-wave,
+  .animate-fade-in {
+    animation: none !important;
+  }
 }
 
 /* Custom Scrollbars */

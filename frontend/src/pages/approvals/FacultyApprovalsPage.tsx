@@ -6,6 +6,7 @@ import { RejectionModal } from '../../components/approvals/RejectionModal';
 import { apiClient } from '../../services/api/apiClient';
 import { Toast, ToastMessage } from '../../components/ui/Toast';
 import { requestsService } from '../../services/api/requestsService';
+import { notificationsService } from '../../services/api/notificationsService';
 
 export const FacultyApprovalsPage: React.FC = () => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -83,21 +84,37 @@ export const FacultyApprovalsPage: React.FC = () => {
 
   useEffect(() => {
     fetchApprovals();
+
+    // Real-time synchronization when any student submits request or state changes
+    const unsubscribe = notificationsService.subscribeToSSE(() => {
+      fetchApprovals();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const fetchApprovals = async () => {
     try {
       setLoading(true);
       const res = await apiClient.get('/approvals');
-      if (Array.isArray(res.data) && res.data.length > 0) {
+      if (Array.isArray(res.data)) {
         setTasks((prev) => {
-          // Merge decided status from local storage so refreshed page preserves decisions
-          const updated = res.data.map((backendTask: ApprovalTaskData) => {
-            const locallyDecided = prev.find((p) => p.id === backendTask.id && p.status !== 'PENDING');
-            return locallyDecided ? locallyDecided : backendTask;
-          });
-          localStorage.setItem('soa_nexus_persistent_approvals', JSON.stringify(updated));
-          return updated;
+          const backendTasks: ApprovalTaskData[] = res.data;
+          // Combine backend tasks with local storage tasks without dropping any
+          const merged: ApprovalTaskData[] = [...backendTasks];
+          for (const local of prev) {
+            const exists = merged.find((b) => b.id === local.id || b.request_id === local.request_id);
+            if (!exists) {
+              merged.unshift(local);
+            } else if (local.status !== 'PENDING' && exists.status === 'PENDING') {
+              // Preserve local decision
+              exists.status = local.status;
+              exists.access_pass_code = local.access_pass_code;
+            }
+          }
+          localStorage.setItem('soa_nexus_persistent_approvals', JSON.stringify(merged));
+          return merged;
         });
       }
     } catch (err) {
@@ -174,6 +191,16 @@ export const FacultyApprovalsPage: React.FC = () => {
         student_name: 'Kaushal Raj Gupta',
         student_reg_no: '2023-CSE-042',
         approver_name: 'Prof. A. K. Samanta'
+      });
+
+      // Explicitly create notification via API to trigger SSE broadcast to student
+      await apiClient.post('/notifications/create', {
+        user_id: '20000000-0000-0000-0000-000000000001',
+        title: `Lab Booking Approved — ${generatedPass}`,
+        message: `Prof. A. K. Samanta approved ${targetTask?.student_name || 'student'}'s lab booking. Digital Access Pass ${generatedPass} has been issued. Check "My Requests" to view your pass.`,
+        type: 'APPROVED',
+        category: 'LAB_BOOKING',
+        link_path: '/requests',
       });
     } catch {
       // Ignore

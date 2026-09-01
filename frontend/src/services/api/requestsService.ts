@@ -50,6 +50,38 @@ function saveStoredRequests(items: ServiceRequestItem[]) {
 export const requestsService = {
   async getRequests(type?: string, status?: string): Promise<ServiceRequestItem[]> {
     let localItems = getStoredRequests();
+
+    // Check if there are locally approved tasks in soa_nexus_persistent_approvals
+    try {
+      const savedApprovals = JSON.parse(localStorage.getItem('soa_nexus_persistent_approvals') || '[]');
+      const activePass = JSON.parse(localStorage.getItem('soa_nexus_active_lab_pass') || 'null');
+
+      localItems = localItems.map(item => {
+        const matchingApproval = savedApprovals.find((a: any) => 
+          a.id === item.id || 
+          a.request_id === item.id || 
+          (a.service_type === item.request_type && a.status === 'APPROVED')
+        );
+
+        if (matchingApproval && matchingApproval.status === 'APPROVED') {
+          return {
+            ...item,
+            status: 'APPROVED',
+            payload: {
+              ...(item.payload || {}),
+              access_pass_code: matchingApproval.access_pass_code || activePass?.access_pass_code || 'PASS-LAB-AI-4019',
+              qr_payload: activePass?.qr_payload || `SOA-NEXUS-PASS|${matchingApproval.access_pass_code || 'PASS-LAB-AI-4019'}|LAB-AI-101|Room C-204|SEAT-14|Tomorrow|14:00-16:00|2023-CSE-042|SIG:VERIFIED`,
+              workstation_no: item.payload?.workstation_no || 14
+            }
+          };
+        }
+        return item;
+      });
+      saveStoredRequests(localItems);
+    } catch {
+      // Ignore
+    }
+
     try {
       const res = await apiClient.get<ServiceRequestItem[]>('/requests', {
         params: {
@@ -112,12 +144,21 @@ export const requestsService = {
         newRecord.id = res.data.id;
         newRecord.tracking_code = res.data.tracking_code;
       }
+      // Broadcast SSE notification for approver queue
+      await apiClient.post('/notifications/create', {
+        user_id: 'u3000000-0000-0000-0000-000000000003', // Lab In-Charge / Faculty
+        title: `New Request Submitted (${newRecord.tracking_code})`,
+        message: `Student submitted a ${payload.request_type.replace(/_/g, ' ')} request requiring sign-off.`,
+        type: 'PENDING_APPROVAL',
+        category: payload.request_type,
+        link_path: '/approvals'
+      });
     } catch {
       // Local creation
     }
 
     const current = getStoredRequests();
-    const updated = [newRecord, ...current];
+    const updated = [newRecord, ...current.filter(c => c.id !== newRecord.id && c.tracking_code !== newRecord.tracking_code)];
     saveStoredRequests(updated);
     return newRecord;
   },
