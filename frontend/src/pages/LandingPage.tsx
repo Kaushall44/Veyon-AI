@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Sparkles,
   Zap,
@@ -16,26 +16,26 @@ import {
   Menu,
   X,
   ChevronRight,
-  Search
-} from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { DEMO_ROLES_MAP } from '../data/mockUsers';
+  Search,
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { DEMO_ROLES_MAP } from "../data/mockUsers";
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { loginAsDemoUser, user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [heroPrompt, setHeroPrompt] = useState('');
+  const [heroPrompt, setHeroPrompt] = useState("");
 
   const handleLaunchRole = (email: string) => {
     loginAsDemoUser(email);
-    navigate('/dashboard');
+    navigate("/dashboard");
   };
 
   const handleQuickLogin = () => {
     if (user) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     } else {
       setShowRoleModal(true);
     }
@@ -44,7 +44,9 @@ export const LandingPage: React.FC = () => {
   const handlePromptSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
-      navigate('/assistant', { state: { initialPrompt: heroPrompt || 'I need my transcript' } });
+      navigate("/assistant", {
+        state: { initialPrompt: heroPrompt || "I need my transcript" },
+      });
     } else {
       setShowRoleModal(true);
     }
@@ -55,9 +57,14 @@ export const LandingPage: React.FC = () => {
       {/* 1. Header Navigation Bar (Pixel Perfect to Image 1) */}
       <header className="sticky top-0 z-40 bg-[#FAF9F5]/90 backdrop-blur-md border-b border-[#EAE7DF] px-6 sm:px-12 py-4 flex items-center justify-between">
         {/* Brand Logo */}
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <div className="flex items-baseline gap-2">
-            <span className="font-serif-title text-3xl font-bold tracking-tight text-[#152E22]">S1</span>
+            <span className="font-serif-title text-3xl font-bold tracking-tight text-[#152E22]">
+              S1
+            </span>
             <span className="text-[10px] font-bold tracking-widest text-[#5A6E63] uppercase border-l border-[#D9D5C7] pl-2 py-0.5">
               SERVICE DIRECTORY
             </span>
@@ -66,11 +73,33 @@ export const LandingPage: React.FC = () => {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-[#4A5D52]">
-          <a href="#home" className="text-[#152E22] font-bold border-b-2 border-[#152E22] pb-0.5">Home</a>
-          <a href="#services" className="hover:text-[#152E22] transition-colors">Services</a>
-          <a href="#how-it-works" className="hover:text-[#152E22] transition-colors">How It Works</a>
-          <a href="#for-students" className="hover:text-[#152E22] transition-colors">For Students</a>
-          <a href="#about" className="hover:text-[#152E22] transition-colors">About S1</a>
+          <a
+            href="#home"
+            className="text-[#152E22] font-bold border-b-2 border-[#152E22] pb-0.5"
+          >
+            Home
+          </a>
+          <a
+            href="#services"
+            className="hover:text-[#152E22] transition-colors"
+          >
+            Services
+          </a>
+          <a
+            href="#how-it-works"
+            className="hover:text-[#152E22] transition-colors"
+          >
+            How It Works
+          </a>
+          <a
+            href="#for-students"
+            className="hover:text-[#152E22] transition-colors"
+          >
+            For Students
+          </a>
+          <a href="#about" className="hover:text-[#152E22] transition-colors">
+            About S1
+          </a>
         </nav>
 
         {/* Action Buttons */}
@@ -95,7 +124,11 @@ export const LandingPage: React.FC = () => {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="md:hidden p-2 rounded-xl text-[#152E22] hover:bg-[#F0EDE3] transition-all"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </header>
 
@@ -103,21 +136,51 @@ export const LandingPage: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-[#EAE7DF] p-6 space-y-4 shadow-xl z-30 animate-fade-in">
           <div className="space-y-3 text-sm font-semibold text-[#152E22] border-b border-[#EAE7DF] pb-4">
-            <a href="#home" onClick={() => setMobileMenuOpen(false)} className="block py-1">Home</a>
-            <a href="#services" onClick={() => setMobileMenuOpen(false)} className="block py-1">Services</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block py-1">How It Works</a>
-            <a href="#for-students" onClick={() => setMobileMenuOpen(false)} className="block py-1">For Students</a>
+            <a
+              href="#home"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1"
+            >
+              Home
+            </a>
+            <a
+              href="#services"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1"
+            >
+              Services
+            </a>
+            <a
+              href="#how-it-works"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1"
+            >
+              How It Works
+            </a>
+            <a
+              href="#for-students"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1"
+            >
+              For Students
+            </a>
           </div>
 
           <div className="space-y-2 pt-2">
             <button
-              onClick={() => { setMobileMenuOpen(false); setShowRoleModal(true); }}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setShowRoleModal(true);
+              }}
               className="w-full py-2.5 rounded-full bg-[#F3F0E6] font-bold text-xs text-[#152E22] text-center block"
             >
               Sign In to Demo Role
             </button>
             <button
-              onClick={() => { setMobileMenuOpen(false); handleQuickLogin(); }}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleQuickLogin();
+              }}
               className="w-full py-2.5 rounded-full bg-[#152E22] text-white font-bold text-xs text-center block"
             >
               Get Started
@@ -138,13 +201,17 @@ export const LandingPage: React.FC = () => {
 
           {/* Hero Main Headline (Exact Editorial Serif Typography) */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif-title text-[#1B231F] leading-[1.05] tracking-tight">
-            Your request.<br />
-            <span className="text-[#152E22] italic font-normal">Our responsibility.</span>
+            Your request.
+            <br />
+            <span className="text-[#152E22] italic font-normal">
+              Our responsibility.
+            </span>
           </h1>
 
           {/* Hero Subtitle */}
           <p className="text-[#4A5D52] text-base sm:text-lg leading-relaxed max-w-xl font-medium">
-            S1 understands your request, finds the right desk, and gets it done—faster.
+            S1 understands your request, finds the right desk, and gets it
+            done—faster.
           </p>
 
           {/* Prompt Search Box (Exact Match to Image 1) */}
@@ -172,24 +239,26 @@ export const LandingPage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold text-[#4A5D52]">
               <button
                 type="button"
-                onClick={() => setHeroPrompt('Check my application status')}
+                onClick={() => setHeroPrompt("Check my application status")}
                 className="px-3.5 py-1.5 rounded-full bg-white border border-[#E5E2D9] hover:border-[#152E22] flex items-center gap-1.5 transition-all"
               >
-                <Sparkles className="w-3 h-3 text-[#152E22]" /> Check application status
+                <Sparkles className="w-3 h-3 text-[#152E22]" /> Check
+                application status
               </button>
               <button
                 type="button"
-                onClick={() => setHeroPrompt('File a confidential grievance')}
+                onClick={() => setHeroPrompt("File a confidential grievance")}
                 className="px-3.5 py-1.5 rounded-full bg-white border border-[#E5E2D9] hover:border-[#152E22] flex items-center gap-1.5 transition-all"
               >
                 <FileText className="w-3 h-3 text-[#152E22]" /> File a grievance
               </button>
               <button
                 type="button"
-                onClick={() => setHeroPrompt('I need a Bonafide Certificate')}
+                onClick={() => setHeroPrompt("I need a Bonafide Certificate")}
                 className="px-3.5 py-1.5 rounded-full bg-white border border-[#E5E2D9] hover:border-[#152E22] flex items-center gap-1.5 transition-all"
               >
-                <FileText className="w-3 h-3 text-[#152E22]" /> Request a document
+                <FileText className="w-3 h-3 text-[#152E22]" /> Request a
+                document
               </button>
             </div>
           </form>
@@ -229,8 +298,12 @@ export const LandingPage: React.FC = () => {
                 ✓
               </div>
               <div className="text-left">
-                <span className="text-[10px] text-[#8C9C92] font-semibold block">Routed to</span>
-                <span className="text-[#152E22] font-bold block">Records Office</span>
+                <span className="text-[10px] text-[#8C9C92] font-semibold block">
+                  Routed to
+                </span>
+                <span className="text-[#152E22] font-bold block">
+                  Records Office
+                </span>
               </div>
             </div>
           </div>
@@ -247,7 +320,9 @@ export const LandingPage: React.FC = () => {
                 <Sparkles className="w-6 h-6" />
               </div>
               <div className="space-y-1 text-left">
-                <h3 className="font-bold text-sm text-[#1B231F]">Smart & Accurate</h3>
+                <h3 className="font-bold text-sm text-[#1B231F]">
+                  Smart & Accurate
+                </h3>
                 <p className="text-xs text-[#5A6E63] leading-relaxed">
                   AI understands your request and identifies the right service.
                 </p>
@@ -260,7 +335,9 @@ export const LandingPage: React.FC = () => {
                 <Zap className="w-6 h-6" />
               </div>
               <div className="space-y-1 text-left">
-                <h3 className="font-bold text-sm text-[#1B231F]">Fast & Efficient</h3>
+                <h3 className="font-bold text-sm text-[#1B231F]">
+                  Fast & Efficient
+                </h3>
                 <p className="text-xs text-[#5A6E63] leading-relaxed">
                   Automated routing reduces waiting and speeds up resolution.
                 </p>
@@ -273,7 +350,9 @@ export const LandingPage: React.FC = () => {
                 <Shield className="w-6 h-6" />
               </div>
               <div className="space-y-1 text-left">
-                <h3 className="font-bold text-sm text-[#1B231F]">Transparent & Secure</h3>
+                <h3 className="font-bold text-sm text-[#1B231F]">
+                  Transparent & Secure
+                </h3>
                 <p className="text-xs text-[#5A6E63] leading-relaxed">
                   Track every step with full visibility and data privacy.
                 </p>
@@ -286,7 +365,9 @@ export const LandingPage: React.FC = () => {
                 <UserCheck className="w-6 h-6" />
               </div>
               <div className="space-y-1 text-left">
-                <h3 className="font-bold text-sm text-[#1B231F]">Human-in-the-Loop</h3>
+                <h3 className="font-bold text-sm text-[#1B231F]">
+                  Human-in-the-Loop
+                </h3>
                 <p className="text-xs text-[#5A6E63] leading-relaxed">
                   Experts review and ensure quality resolution.
                 </p>
@@ -301,8 +382,12 @@ export const LandingPage: React.FC = () => {
                 <FileText className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">2.4K+</span>
-                <span className="text-xs text-[#5A6E63] font-medium block">Requests Processed</span>
+                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">
+                  2.4K+
+                </span>
+                <span className="text-xs text-[#5A6E63] font-medium block">
+                  Requests Processed
+                </span>
               </div>
             </div>
 
@@ -311,8 +396,12 @@ export const LandingPage: React.FC = () => {
                 <Clock className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">98.6%</span>
-                <span className="text-xs text-[#5A6E63] font-medium block">Resolution Rate</span>
+                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">
+                  98.6%
+                </span>
+                <span className="text-xs text-[#5A6E63] font-medium block">
+                  Resolution Rate
+                </span>
               </div>
             </div>
 
@@ -321,8 +410,12 @@ export const LandingPage: React.FC = () => {
                 <Users className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">15+</span>
-                <span className="text-xs text-[#5A6E63] font-medium block">Service Desks</span>
+                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">
+                  15+
+                </span>
+                <span className="text-xs text-[#5A6E63] font-medium block">
+                  Service Desks
+                </span>
               </div>
             </div>
 
@@ -331,8 +424,12 @@ export const LandingPage: React.FC = () => {
                 <Shield className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">24/7</span>
-                <span className="text-xs text-[#5A6E63] font-medium block">AI Assistant Support</span>
+                <span className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F] block">
+                  24/7
+                </span>
+                <span className="text-xs text-[#5A6E63] font-medium block">
+                  AI Assistant Support
+                </span>
               </div>
             </div>
           </div>
@@ -340,9 +437,16 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* 4. How It Works Section Title */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-6 sm:px-12 py-12 text-center space-y-2">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#5A6E63]">HOW IT WORKS</span>
-        <h2 className="text-3xl sm:text-4xl font-serif-title text-[#1B231F]">Simple steps. Seamless resolution.</h2>
+      <section
+        id="how-it-works"
+        className="max-w-7xl mx-auto px-6 sm:px-12 py-12 text-center space-y-2"
+      >
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[#5A6E63]">
+          HOW IT WORKS
+        </span>
+        <h2 className="text-3xl sm:text-4xl font-serif-title text-[#1B231F]">
+          Simple steps. Seamless resolution.
+        </h2>
       </section>
 
       {/* Demo Role Selector Modal */}
@@ -357,9 +461,12 @@ export const LandingPage: React.FC = () => {
             </button>
 
             <div className="space-y-1 text-center">
-              <h3 className="text-xl font-serif-title font-bold text-[#1B231F]">Select Evaluation Persona</h3>
+              <h3 className="text-xl font-serif-title font-bold text-[#1B231F]">
+                Select Evaluation Persona
+              </h3>
               <p className="text-xs text-[#5A6E63]">
-                Experience S1 Service Directory under any pre-configured demo account.
+                Experience S1 Service Directory under any pre-configured demo
+                account.
               </p>
             </div>
 
@@ -371,8 +478,12 @@ export const LandingPage: React.FC = () => {
                   className="w-full p-3.5 rounded-2xl border border-[#E5E2D9] bg-[#FAF8F3] hover:bg-[#E8F5E9]/50 hover:border-[#152E22] transition-all text-left flex items-center justify-between gap-3 group cursor-pointer"
                 >
                   <div className="space-y-0.5">
-                    <span className="font-bold text-xs text-[#1B231F] group-hover:text-[#152E22]">{demo.label}</span>
-                    <p className="text-[11px] text-[#5A6E63]">{demo.description}</p>
+                    <span className="font-bold text-xs text-[#1B231F] group-hover:text-[#152E22]">
+                      {demo.label}
+                    </span>
+                    <p className="text-[11px] text-[#5A6E63]">
+                      {demo.description}
+                    </p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-[#8C9C92] group-hover:text-[#152E22] shrink-0" />
                 </button>
@@ -386,14 +497,31 @@ export const LandingPage: React.FC = () => {
       <footer className="bg-[#152E22] text-white py-10 px-6 sm:px-12 border-t border-[#1E3A2B]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-[#8C9C92]">
           <div className="flex items-center gap-3">
-            <span className="font-serif-title text-xl font-bold text-white">S1</span>
-            <span>© 2026 SOA Nexus AI. Institute of Technical Education & Research (ITER).</span>
+            <span className="font-serif-title text-xl font-bold text-white">
+              S1
+            </span>
+            <span>
+              © 2026 SOA Nexus AI. Institute of Technical Education & Research
+              (ITER).
+            </span>
           </div>
 
           <div className="flex items-center gap-6 font-semibold">
-            <a href="#services" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#how-it-works" className="hover:text-white transition-colors">Governance Rules</a>
-            <a href="#for-students" className="hover:text-white transition-colors">Student Helpdesk</a>
+            <a href="#services" className="hover:text-white transition-colors">
+              Privacy Policy
+            </a>
+            <a
+              href="#how-it-works"
+              className="hover:text-white transition-colors"
+            >
+              Governance Rules
+            </a>
+            <a
+              href="#for-students"
+              className="hover:text-white transition-colors"
+            >
+              Student Helpdesk
+            </a>
           </div>
         </div>
       </footer>
