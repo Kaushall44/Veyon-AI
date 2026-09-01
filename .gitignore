@@ -14,21 +14,29 @@ build/
 *.egg-info/
 .tmp/
 
-# Python Cache
+# Python Cache & Bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 
-# System & Environment Files
+# System & Environment Files (Strictly Exclude Secrets)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+*.env
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
 .DS_Store
 Thumbs.db
 DEPLOYMENT.md
+
+# Database Files
+*.db
+*.sqlite3
+backend/soa_nexus.db
+soa_nexus.db
 
 # IDE & Editor Configs
 .vscode/

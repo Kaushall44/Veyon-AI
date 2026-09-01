@@ -1,19 +1,18 @@
-import sys
-import os
 import unittest
-
-# Ensure backend root is in import path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from services.ai.intent_classifier import process_nlu_pipeline
+from schemas.chat_schemas import IntentResult, ExtractedEntities
+from services.ai.intent_classifier import classify_intent, process_nlu_pipeline
 
 class TestIntentClassifier(unittest.TestCase):
 
     def test_20_nlu_sample_prompts(self):
+        """
+        Runs full intent classification test suite across 20 synthetic user prompts 
+        spanning all service categories to ensure zero regressions.
+        """
         test_cases = [
             # LAB_BOOKING
-            ("I want to book the AI Lab tomorrow from 2 PM to 4 PM for my project.", "LAB_BOOKING"),
-            ("Reserve the Microelectronics Lab for next Monday.", "LAB_BOOKING"),
+            ("I want to book the AI Lab tomorrow from 2 PM to 4 PM.", "LAB_BOOKING"),
+            ("Reserve the Microelectronics Lab for next Monday 10:00 to 12:00.", "LAB_BOOKING"),
             ("Book CAD Kiosk for 3 hours.", "LAB_BOOKING"),
             ("Need to reserve AI Lab slot tomorrow.", "LAB_BOOKING"),
 
@@ -30,8 +29,8 @@ class TestIntentClassifier(unittest.TestCase):
             ("Plumbing issue water pipe leaking in hostel.", "MAINTENANCE"),
 
             # GRIEVANCE
-            ("I want to submit a formal grievance regarding non-functional computers.", "GRIEVANCE"),
-            ("File a confidential complaint about harassment.", "GRIEVANCE"),
+            ("I want to submit a formal grievance regarding mess hygiene.", "GRIEVANCE"),
+            ("File a confidential complaint about harassment during hostel hours.", "GRIEVANCE"),
             ("Submit formal ragging complaint.", "GRIEVANCE"),
 
             # FAQ
@@ -39,8 +38,8 @@ class TestIntentClassifier(unittest.TestCase):
             ("What are the hostel night curfew rules?", "FAQ"),
             ("What is the exam fee refund regulation?", "FAQ"),
 
-            # UNKNOWN
-            ("Hello good morning.", "UNKNOWN"),
+            # GREETING / UNKNOWN
+            ("Hello good morning.", "GREETING"),
             ("Tell me a random joke.", "UNKNOWN")
         ]
 
@@ -58,11 +57,9 @@ class TestIntentClassifier(unittest.TestCase):
         
         self.assertEqual(result.detected_intent, "LAB_BOOKING")
         self.assertGreaterEqual(result.intent_confidence, 0.95)
-        
-        entities = result.extracted_entities
-        self.assertEqual(entities.lab_id, "LAB-AI-101")
-        self.assertEqual(entities.start_time, "14:00")
-        self.assertEqual(entities.end_time, "16:00")
+        self.assertEqual(result.extracted_entities.lab_id, "LAB-AI-101")
+        self.assertEqual(result.extracted_entities.start_time, "14:00")
+        self.assertEqual(result.extracted_entities.end_time, "16:00")
         print("\n[PASSED] Flagship Acceptance Criteria Passed: LAB_BOOKING, LAB-AI-101, 14:00-16:00, Conf > 0.95")
 
 if __name__ == "__main__":

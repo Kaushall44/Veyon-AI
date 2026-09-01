@@ -19,18 +19,34 @@ class ChatRequest(BaseModel):
     prompt: str = Field(..., example="I want to book the AI Lab tomorrow from 2 PM to 4 PM for my project.")
     session_id: Optional[str] = Field("SES-DEFAULT", example="SES-88192")
     language: Optional[str] = Field("en", example="en")
+    user_role: Optional[str] = Field("Student", example="Student")
 
 class IntentResult(BaseModel):
-    detected_intent: str = Field(..., example="LAB_BOOKING")
-    intent_confidence: float = Field(..., example=0.98)
-    extracted_entities: ExtractedEntities
+    intent: Optional[str] = Field(None, example="LAB_BOOKING")
+    confidence: Optional[float] = Field(None, example=0.98)
+    reasoning: Optional[str] = Field(None, example="NLU Classifier")
+    detected_intent: Optional[str] = Field(None, example="LAB_BOOKING")
+    intent_confidence: Optional[float] = Field(None, example=0.98)
+    extracted_entities: Optional[ExtractedEntities] = None
 
 class ChatResponse(BaseModel):
-    response_type: str = Field(..., example="INTENT_CLASSIFIED")
-    message: str = Field(..., example="Intent classified as LAB_BOOKING")
-    intent: str = Field(..., example="LAB_BOOKING")
-    intent_confidence: float = Field(..., example=0.98)
-    entities: Dict[str, Any]
+    response_type: Optional[str] = Field("INTENT_CLASSIFIED", example="INTENT_CLASSIFIED")
+    message: Optional[str] = Field(None, example="Intent classified as LAB_BOOKING")
+    intent: Optional[str] = Field(None, example="LAB_BOOKING")
+    intent_confidence: Optional[float] = Field(None, example=0.98)
+    entities: Optional[Dict[str, Any]] = None
     citations: List[Dict[str, Any]] = Field(default_factory=list)
     action_plan: Optional[Dict[str, Any]] = None
     request_id: Optional[str] = None
+    
+    # Supporting fields
+    detected_intent: Optional[IntentResult] = None
+    extracted_entities: Optional[ExtractedEntities] = None
+    suggested_action: Optional[str] = None
+    response_text: Optional[str] = None
+    thought: Optional[str] = None
+    risk_level: Optional[str] = None
+    requires_approval: Optional[bool] = None
+    is_uncertainty_refusal: Optional[bool] = Field(False, description="Flag indicating retrieval confidence was below 0.82 threshold")
+    refusal_reason: Optional[str] = None
+    department_contact: Optional[Dict[str, Any]] = None

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Role, AuthState, AuthContextType } from '../types/auth';
+import { User, Role, AuthContextType } from '../types/auth';
+import { authService, RegisterPayload } from '../services/api/authService';
 import { MOCK_USERS } from '../data/mockUsers';
 
 const AUTH_STORAGE_KEY_USER = 'soa_nexus_user';
@@ -13,7 +14,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [authWarning, setAuthWarning] = useState<string | null>(null);
 
-  // Initialize session from localStorage
+  // Initialize session from storage or seed defaults
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem(AUTH_STORAGE_KEY_USER);
@@ -23,12 +24,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUser(JSON.parse(storedUser));
         setToken(storedToken);
       } else {
-        // Default seed user: Student
         const defaultStudent = MOCK_USERS['student@soa.ac.in'];
         setUser(defaultStudent);
-        setToken(`demo_jwt_token_${defaultStudent.id}`);
+        setToken(`jwt_session_${defaultStudent.id}`);
         localStorage.setItem(AUTH_STORAGE_KEY_USER, JSON.stringify(defaultStudent));
-        localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, `demo_jwt_token_${defaultStudent.id}`);
+        localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, `jwt_session_${defaultStudent.id}`);
       }
     } catch (e) {
       console.error('Failed to parse auth state:', e);
@@ -37,49 +37,54 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const login = async (email: string): Promise<boolean> => {
+  const login = async (email: string, password?: string): Promise<boolean> => {
     setIsLoading(true);
-    const matchedUser = MOCK_USERS[email] || Object.values(MOCK_USERS).find((u) => u.email === email);
-    
-    if (matchedUser) {
-      const mockToken = `jwt_token_${matchedUser.id}_${Date.now()}`;
-      setUser(matchedUser);
-      setToken(mockToken);
-      localStorage.setItem(AUTH_STORAGE_KEY_USER, JSON.stringify(matchedUser));
-      localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, mockToken);
+    try {
+      const authRes = await authService.login(email, password);
+      setUser(authRes.user);
+      setToken(authRes.access_token);
+      localStorage.setItem(AUTH_STORAGE_KEY_USER, JSON.stringify(authRes.user));
+      localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, authRes.access_token);
       setIsLoading(false);
       return true;
+    } catch (err) {
+      setIsLoading(false);
+      return false;
     }
-
-    setIsLoading(false);
-    return false;
   };
 
-  const loginAsDemoUser = (roleOrEmail: Role | string) => {
-    let targetUser: User | undefined;
-    
-    // Check if role or email passed
-    if (MOCK_USERS[roleOrEmail]) {
-      targetUser = MOCK_USERS[roleOrEmail];
-    } else {
-      targetUser = Object.values(MOCK_USERS).find(
-        (u) => u.role === roleOrEmail || u.email.toLowerCase() === roleOrEmail.toLowerCase()
-      );
+  const register = async (payload: RegisterPayload): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const authRes = await authService.register(payload);
+      setUser(authRes.user);
+      setToken(authRes.access_token);
+      localStorage.setItem(AUTH_STORAGE_KEY_USER, JSON.stringify(authRes.user));
+      localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, authRes.access_token);
+      setIsLoading(false);
+      return true;
+    } catch (err) {
+      setIsLoading(false);
+      return false;
     }
-
-    if (!targetUser) {
-      targetUser = MOCK_USERS['student@soa.ac.in'];
-    }
-
-    const mockToken = `demo_jwt_token_${targetUser.id}_${Date.now()}`;
-    setUser(targetUser);
-    setToken(mockToken);
-    localStorage.setItem(AUTH_STORAGE_KEY_USER, JSON.stringify(targetUser));
-    localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, mockToken);
-    setAuthWarning(null);
   };
 
-  const logout = () => {
+  const loginAsDemoUser = async (roleOrEmail: Role | string) => {
+    setIsLoading(true);
+    try {
+      const authRes = await authService.loginAsDemoUser(roleOrEmail);
+      setUser(authRes.user);
+      setToken(authRes.access_token);
+      localStorage.setItem(AUTH_STORAGE_KEY_USER, JSON.stringify(authRes.user));
+      localStorage.setItem(AUTH_STORAGE_KEY_TOKEN, authRes.access_token);
+      setAuthWarning(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
     setToken(null);
     localStorage.removeItem(AUTH_STORAGE_KEY_USER);
@@ -105,6 +110,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isAuthenticated: !!user && !!token,
         isLoading,
         login,
+        register,
         loginAsDemoUser,
         logout,
         isAuthorized,

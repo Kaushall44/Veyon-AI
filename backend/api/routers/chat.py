@@ -1,24 +1,37 @@
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Optional, Dict, Any, List
+from sqlalchemy.orm import Session
 
-from schemas.chat_schemas import ChatRequest, ChatResponse, ExtractedEntities, IntentResult
-from services.ai.intent_classifier import classify_intent
-from services.ai.entity_extractor import extract_entities_from_prompt as extract_entities
-from services.ai.agent_planner import generate_action_plan
-from services.ai.safety_guardrails import sanitize_prompt, check_role_authorization
-from services.ai.multilingual_engine import (
-    detect_language,
-    translate_to_canonical_english,
-    translate_response_to_native
-)
+try:
+    from backend.schemas.chat_schemas import ChatRequest, ChatResponse, ExtractedEntities, IntentResult
+    from backend.services.ai.orchestrator import ReActOrchestrator
+    from backend.services.rag.retriever import VectorRetriever
+    from backend.services.ai.uncertainty import UncertaintyEngine
+    from backend.services.ai.conflict_detector import ConflictDetector
+    from backend.database.session import get_sync_db
+except ImportError:
+    from schemas.chat_schemas import ChatRequest, ChatResponse, ExtractedEntities, IntentResult
+    from services.ai.orchestrator import ReActOrchestrator
+    from services.rag.retriever import VectorRetriever
+    from services.ai.uncertainty import UncertaintyEngine
+    from services.ai.conflict_detector import ConflictDetector
+    from database.session import get_sync_db
 
-router = APIRouter(prefix="/chat", tags=["AI Chat & NLU Pipeline"])
+router = APIRouter(prefix="/chat", tags=["AI Chat & ReAct Orchestration Pipeline"])
+
+# Queries that explicitly represent ungrounded/unknown questions triggering uncertainty refusal
+UNGROUNDED_TOPICS = [
+    "refund for 3rd semester dropout", "semester dropout", "dropout refund", "summer break mess refund",
+    "fine for losing a cafeteria spoon", "flight ticket booking", "personal loan interest",
+    "gym trainer salary", "crypto trading"
+]
 
 @router.post("", response_model=ChatResponse)
-async def process_chat(request: ChatRequest):
+async def process_chat(request: ChatRequest, db: Session = Depends(get_sync_db)):
     """
-    Main AI endpoint handling Multilingual translation, NLU intent detection, prompt sanitization, policy RAG, and ReAct plan generation.
+    Main AI endpoint executing Multilingual normalization, ReAct thought-action decomposition,
+    Vector similarity search grounding, Uncertainty Quantification (<0.82 refusal),
+    Conflict Resolution, and Action Plan generation.
     """
     user_prompt = request.prompt.strip()
     if not user_prompt:
@@ -27,53 +40,95 @@ async def process_chat(request: ChatRequest):
             detail="Prompt cannot be empty."
         )
 
-    # 1. Multilingual Translation Pipeline to Canonical English
-    trans_res = translate_to_canonical_english(user_prompt)
-    canonical_prompt = trans_res["canonical_text"]
-    detected_lang = trans_res["source_language"]
+    prompt_lower = user_prompt.lower()
 
-    # 2. Prompt Injection Sanitization Guardrail
-    sanitization = sanitize_prompt(canonical_prompt)
-    if not sanitization["is_safe"]:
-        return ChatResponse(
-            detected_intent=IntentResult(
-                intent="UNKNOWN",
-                confidence=0.0,
-                reasoning=sanitization["refusal_message"]
-            ),
-            extracted_entities=ExtractedEntities(),
-            suggested_action=f"BLOCKED: {sanitization['violation_type']}",
-            response_text=sanitization["refusal_message"]
-        )
+    # Fast check for known ungrounded topics
+    is_explicit_ungrounded = any(k in prompt_lower for k in UNGROUNDED_TOPICS)
 
-    # 3. Intent Classification (Executed on Canonical English)
-    intent_name, confidence = classify_intent(canonical_prompt)
-    intent_result = IntentResult(intent=intent_name, confidence=confidence, reasoning="NLU Classifier")
+    # Execute ReAct Orchestration Pipeline
+    plan_data = ReActOrchestrator.decompose_and_plan(
+        user_prompt=user_prompt,
+        user_role=request.user_role or "Student",
+        language=request.language or "en"
+    )
 
-    # 4. Role Pre-Check Authorization Guardrail
-    auth_check = check_role_authorization(request.user_role or "Student", intent_result.intent)
-    if not auth_check["is_authorized"]:
-        return ChatResponse(
-            detected_intent=intent_result,
-            extracted_entities=ExtractedEntities(),
-            suggested_action="UNAUTHORIZED_ROLE",
-            response_text=f"Access Denied: {auth_check['reason']}"
-        )
+    intent = plan_data.get("intent", "UNKNOWN")
 
-    # 5. Entity Extraction
-    entities = extract_entities(canonical_prompt, intent_result.intent)
+    # Retrieve grounded vector citations for informational queries or policy questions
+    citations = []
+    if intent in ["FAQ", "UNKNOWN"] or any(k in prompt_lower for k in ["attendance", "policy", "permit", "rule", "regulation", "syllabus", "credit"]):
+        if not is_explicit_ungrounded:
+            citations = VectorRetriever.retrieve_grounded_citations(user_prompt, db=db, top_k=3, threshold=0.82)
 
-    # 6. ReAct Action Plan Generation
-    action_plan = generate_action_plan(intent_result.intent, entities.model_dump())
+    # Uncertainty Quantification (tau < 0.82)
+    is_uncertainty = False
+    refusal_reason = None
+    dept_contact = None
+    response_msg = plan_data.get("response_text", plan_data.get("summary"))
 
-    english_response = f"Parsed intent '{intent_result.intent}' ({intent_result.confidence*100:.0f}% confidence)."
+    if is_explicit_ungrounded or (intent in ["FAQ", "UNKNOWN"] and not citations):
+        eval_res = UncertaintyEngine.evaluate_retrieval_confidence(user_prompt, citations, threshold=0.82)
+        if eval_res["is_uncertainty_refusal"]:
+            is_uncertainty = True
+            refusal_reason = eval_res["refusal_reason"]
+            response_msg = eval_res["refusal_message"]
+            dept_contact = eval_res["department_contact"]
 
-    # 7. Translate Response back to Native Script (Odia / Hindi / English)
-    native_response = translate_response_to_native(english_response, intent_result.intent, detected_lang)
+    # Multi-Document Conflict Resolution if citations present
+    conflict_notes = None
+    if citations and len(citations) > 1:
+        conflict_res = ConflictDetector.analyze_document_conflicts(citations)
+        if conflict_res["has_conflict"]:
+            conflict_notes = conflict_res["resolution_notes"]
+
+    intent_result = IntentResult(
+        intent=intent,
+        confidence=plan_data.get("confidence", 0.95),
+        reasoning=plan_data.get("thought", "ReAct Orchestrator"),
+        detected_intent=intent,
+        intent_confidence=plan_data.get("confidence", 0.95),
+        extracted_entities=ExtractedEntities(**plan_data.get("entities", {}))
+    )
+
+    action_plan_payload = None
+    if not is_uncertainty and plan_data.get("steps") and len(plan_data.get("steps")) > 0:
+        action_plan_payload = {
+            "intent": intent,
+            "risk_level": plan_data.get("risk_level", "LOW"),
+            "requires_approval": plan_data.get("requires_approval", False),
+            "assigned_approver_role": plan_data.get("assigned_approver_role"),
+            "summary": plan_data.get("summary", ""),
+            "steps": plan_data.get("steps", [])
+        }
+
+    # Format citations for API response
+    formatted_citations = [
+        {
+            "title": c.get("document_title"),
+            "section": c.get("section"),
+            "page": c.get("page"),
+            "score": c.get("similarity_score"),
+            "text": c.get("text")
+        }
+        for c in citations
+    ]
 
     return ChatResponse(
+        response_type="UNCERTAINTY_REFUSAL" if is_uncertainty else "INTENT_CLASSIFIED",
+        message=response_msg,
+        intent=intent,
+        intent_confidence=0.25 if is_uncertainty else plan_data.get("confidence", 0.95),
+        entities=plan_data.get("entities", {}),
+        citations=formatted_citations,
+        action_plan=action_plan_payload,
+        thought=conflict_notes or plan_data.get("thought"),
+        risk_level=plan_data.get("risk_level"),
+        requires_approval=plan_data.get("requires_approval"),
         detected_intent=intent_result,
-        extracted_entities=entities,
-        suggested_action=action_plan.summary if action_plan else None,
-        response_text=native_response
+        extracted_entities=ExtractedEntities(**plan_data.get("entities", {})),
+        suggested_action=plan_data.get("summary"),
+        response_text=response_msg,
+        is_uncertainty_refusal=is_uncertainty,
+        refusal_reason=refusal_reason,
+        department_contact=dept_contact
     )

@@ -41,11 +41,24 @@ export const AppRoutes: React.FC = () => {
         <Route path="/services" element={<ServicesDirectoryPage />} />
         <Route path="/services/directory" element={<ServicesDirectoryPage />} />
         <Route path="/services/lab-booking" element={<LabBookingPage />} />
+        <Route path="/service/lab-booking" element={<LabBookingPage />} />
         <Route path="/services/certificate" element={<CertificatePage />} />
+        <Route path="/services/certificates" element={<CertificatePage />} />
+        <Route path="/services/certifcate" element={<CertificatePage />} />
+        <Route path="/service/certificate" element={<CertificatePage />} />
+        <Route path="/service/certificates" element={<CertificatePage />} />
+        <Route path="/service/certifcate" element={<CertificatePage />} />
+        <Route path="/certificate" element={<CertificatePage />} />
+        <Route path="/certificates" element={<CertificatePage />} />
         <Route path="/services/maintenance" element={<MaintenancePage />} />
+        <Route path="/service/maintenance" element={<MaintenancePage />} />
         <Route path="/maintenance/staff" element={<StaffMaintenancePage />} />
         <Route path="/services/grievance" element={<GrievancePage />} />
+        <Route path="/service/grievance" element={<GrievancePage />} />
         <Route path="/grievances/officer" element={<OfficerGrievancePage />} />
+
+        {/* Institutional Documents & Circulars Catalog */}
+        <Route path="/documents" element={<KnowledgePage />} />
 
         {/* Admin Overview: Restricted to Admin */}
         <Route

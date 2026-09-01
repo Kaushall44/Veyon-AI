@@ -1,11 +1,12 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from schemas.plan_schemas import ActionPlan, ActionStep
 
-def generate_action_plan(intent: str, entities: Dict[str, Any]) -> ActionPlan:
+def generate_action_plan(intent: str, entities: Dict[str, Any]) -> Optional[ActionPlan]:
     """
     ReAct Multi-step Action Planner Engine.
-    Decomposes institutional service requests into ordered execution steps,
+    Decomposes actionable institutional service requests into ordered execution steps,
     classifies risk level, and determines human-in-the-loop approval gating.
+    Returns None for conversational greetings or general informational Q&A.
     """
     lab_name = entities.get("lab_name", "Advanced AI Lab")
     date_str = entities.get("date", "Tomorrow")
@@ -63,7 +64,7 @@ def generate_action_plan(intent: str, entities: Dict[str, Any]) -> ActionPlan:
                 ActionStep(
                     step_number=1,
                     title="Verify Student Active Enrollment",
-                    description="Confirmed active registration no. 2023-CSE-042 in CSE Department.",
+                    description="Confirmed active registration no. in department database.",
                     status="PASSED",
                     assigned_actor="Academic Database"
                 ),
@@ -109,7 +110,7 @@ def generate_action_plan(intent: str, entities: Dict[str, Any]) -> ActionPlan:
                 ActionStep(
                     step_number=2,
                     title="Auto-Assign Location Technician",
-                    description="Assigned ticket #MT-8842 to technician Rajesh Kumar.",
+                    description="Assigned ticket to on-duty estates maintenance technician.",
                     status="IN_PROGRESS",
                     assigned_actor="Rajesh Kumar (Technician)"
                 ),
@@ -155,20 +156,5 @@ def generate_action_plan(intent: str, entities: Dict[str, Any]) -> ActionPlan:
             ]
         )
 
-    # FAQ or Default Fallback Plan
-    return ActionPlan(
-        intent="FAQ",
-        risk_level="LOW",
-        requires_approval=False,
-        assigned_approver_role=None,
-        summary="Direct RAG Grounded Answer Retrieval.",
-        steps=[
-            ActionStep(
-                step_number=1,
-                title="Knowledge Base Policy Query",
-                description="Retrieved passage from official SOA policy repository.",
-                status="COMPLETED",
-                assigned_actor="RAG Engine"
-            )
-        ]
-    )
+    # For GREETING, FAQ, or UNKNOWN, no action plan is generated
+    return None

@@ -10,7 +10,10 @@ import {
   ChevronRight, 
   X,
   UserCheck,
-  Bot
+  Bot,
+  Wrench,
+  Scale,
+  Database
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types/auth';
@@ -30,20 +33,40 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseMobile }) => {
   const { user } = useAuth();
   const location = useLocation();
-  const userRole = user?.role || 'Student';
+  const userRole = (user?.role || 'Student') as Role;
 
   const allNavItems: NavItem[] = [
     { label: 'Home', path: '/dashboard', icon: Home },
     { label: 'AI Assistant', path: '/assistant', icon: Bot },
     { label: 'My Requests', path: '/requests', icon: Clock },
-    { label: 'Services', path: '/services/lab-booking', icon: Grid },
+    { label: 'Services Directory', path: '/services', icon: Grid },
+    { label: 'Certificates & NOC', path: '/services/certificate', icon: FileText },
+    { label: 'Lab Booking', path: '/services/lab-booking', icon: Grid },
     { label: 'Grievances', path: '/services/grievance', icon: ShieldAlert },
-    { label: 'Documents', path: '/services/certificate', icon: FileText },
+    { label: 'Documents', path: '/documents', icon: FileText },
     { 
-      label: userRole === 'Lab_In_Charge' ? 'Approvals' : 'Approvals Desk', 
+      label: userRole === 'Lab_In_Charge' ? 'Lab Approvals' : 'Approvals Desk', 
       path: '/approvals', 
       icon: UserCheck, 
       allowedRoles: ['Faculty', 'Lab_In_Charge', 'Admin', 'Super_Admin']
+    },
+    { 
+      label: 'Staff Work Orders', 
+      path: '/maintenance/staff', 
+      icon: Wrench, 
+      allowedRoles: ['Estates_Staff', 'Maintenance_Staff', 'Admin', 'Super_Admin']
+    },
+    { 
+      label: 'Grievance Redressal', 
+      path: '/grievances/officer', 
+      icon: Scale, 
+      allowedRoles: ['Grievance_Officer', 'Admin', 'Super_Admin']
+    },
+    { 
+      label: 'Audit Trail', 
+      path: '/audit', 
+      icon: Database, 
+      allowedRoles: ['Admin', 'Super_Admin']
     },
     { 
       label: 'Admin Console', 
@@ -55,12 +78,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
 
   const visibleNavItems = allNavItems.filter((item) => {
     if (!item.allowedRoles) return true;
-    return item.allowedRoles.includes(userRole);
+    return item.allowedRoles.includes(userRole) || userRole === 'Admin' || userRole === 'Super_Admin';
   });
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-[#FAF9F5] text-[#1B231F] border-r border-[#EAE7DF] font-sans">
-      {/* S1 Brand Header (Exact Match to Image 3) */}
+      {/* S1 Brand Header */}
       <div className="p-6 border-b border-[#EAE7DF] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="font-serif-title text-3xl font-bold tracking-tight text-[#152E22]">S1</span>
@@ -105,30 +128,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
         })}
       </nav>
 
-      {/* Queue Counter Status Pill (Exact Match to Image 3) */}
+      {/* Role Badge Status Pill */}
       <div className="px-5 py-3 border-t border-[#EAE7DF]">
-        <div className="text-[11px] font-bold text-[#5A6E63] uppercase tracking-wider block mb-1">
-          QUEUE STATUS
+        <div className="text-[10px] font-bold text-[#5A6E63] uppercase tracking-wider block mb-1">
+          CURRENT ACCESS ROLE
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold text-[#152E22]">
           <span className="w-2 h-2 rounded-full bg-[#2E7D32] animate-pulse"></span>
-          <span>Counter open</span>
+          <span className="font-mono text-xs">{userRole.replace(/_/g, ' ')}</span>
         </div>
       </div>
 
-      {/* User Profile Card at Bottom (Exact Match to Image 3) */}
+      {/* User Profile Card at Bottom */}
       <div className="p-4 border-t border-[#EAE7DF] bg-[#FAF8F3]">
         <div className="bg-white border border-[#E5E2D9] rounded-2xl p-3 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 rounded-full bg-[#E5E2D9] text-[#152E22] font-bold text-xs flex items-center justify-center shrink-0">
-              KR
+              {user?.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'KR'}
             </div>
             <div className="min-w-0">
               <span className="font-bold text-xs text-[#1B231F] truncate block">
-                {user?.name || 'Kaushal Raj Gupta'}
+                {user?.full_name || user?.name || 'Kaushal Raj Gupta'}
               </span>
               <span className="text-[10px] text-[#5A6E63] font-medium block truncate">
-                2023-CSE-042
+                {user?.reg_number || user?.registrationNo || user?.email || '2023-CSE-042'}
               </span>
             </div>
           </div>

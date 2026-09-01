@@ -4,6 +4,7 @@ import { Send, Bot, User, Sparkles, AlertCircle, FileText, ArrowRight, ShieldChe
 import { ActionPlanCard, ActionPlanData } from '../components/chat/ActionPlanCard';
 import { DigitalAccessPass } from '../components/services/DigitalAccessPass';
 import { UncertaintyCard } from '../components/chat/UncertaintyCard';
+import { SourceCard } from '../components/chat/SourceCard';
 import { apiClient } from '../services/api/apiClient';
 
 interface Message {
@@ -18,6 +19,13 @@ interface Message {
   isUncertaintyRefusal?: boolean;
   userQuery?: string;
   isSafetyBlocked?: boolean;
+  departmentContact?: {
+    office: string;
+    campus: string;
+    email: string;
+    phone: string;
+    timings?: string;
+  };
 }
 
 export const AssistantPage: React.FC = () => {
@@ -56,27 +64,31 @@ export const AssistantPage: React.FC = () => {
     setInputPrompt('');
     setLoading(true);
 
-    // First try live backend FastAPI endpoint
+    // Live backend FastAPI ReAct endpoint
     try {
-      const response = await apiClient.post('/chat/query', {
-        user_id: 'student-2023-cse-042',
+      const response = await apiClient.post('/chat', {
         prompt: promptText,
-        language: 'EN',
+        user_role: 'Student',
+        language: 'en',
       });
 
-      if (response.data && response.data.response_text) {
+      if (response.data) {
         const apiData = response.data;
+        const rawText = apiData.response_text || apiData.message || 'Request analyzed successfully.';
+        const isActionableIntent = ['LAB_BOOKING', 'CERTIFICATE', 'MAINTENANCE', 'GRIEVANCE'].includes(apiData.intent || '');
         const assistantMsg: Message = {
           id: `a-${Date.now()}`,
           sender: 'assistant',
-          text: apiData.response_text,
+          text: rawText,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          intent: apiData.detected_intent || 'FAQ',
-          confidence: apiData.confidence_score || 0.95,
-          sources: apiData.citations || [{ title: 'SOA_Academic_Regulations_2025.txt', page: 6, score: 0.92 }],
-          actionPlan: apiData.action_plan,
-          isUncertaintyRefusal: apiData.is_uncertainty_refusal,
+          intent: apiData.intent || (typeof apiData.detected_intent === 'object' ? apiData.detected_intent.intent : apiData.detected_intent) || 'FAQ',
+          confidence: apiData.intent_confidence || (typeof apiData.detected_intent === 'object' ? apiData.detected_intent.confidence : 0.95),
+          sources: apiData.citations && apiData.citations.length > 0 ? apiData.citations : undefined,
+          actionPlan: isActionableIntent && apiData.action_plan?.steps?.length > 0 ? apiData.action_plan : undefined,
+          isUncertaintyRefusal: apiData.is_uncertainty_refusal || rawText.includes('Zero-Hallucination') || rawText.includes('Uncertainty Refusal') || rawText.includes('insufficient policy grounding'),
           userQuery: promptText,
+          isSafetyBlocked: rawText.includes('BLOCKED') || rawText.includes('Security Policy Violation'),
+          departmentContact: apiData.department_contact,
         };
 
         setMessages((prev) => [...prev, assistantMsg]);
@@ -84,7 +96,7 @@ export const AssistantPage: React.FC = () => {
         return;
       }
     } catch (err) {
-      console.log('Backend server offline or unreachable. Using intelligent local NLU responder.');
+      console.log('Backend server offline or unreachable. Using intelligent local NLU fallback.');
     }
 
     // Dynamic Intelligent Local NLU Responder for ALL Questions
@@ -347,19 +359,9 @@ export const AssistantPage: React.FC = () => {
                   {msg.text}
                 </div>
 
-                {/* Grounded Citation Badges */}
+                {/* Grounded Citation Source Cards */}
                 {msg.sources && msg.sources.length > 0 && (
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    {msg.sources.map((src, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9] text-[11px] font-bold flex items-center gap-1.5"
-                      >
-                        <FileText className="w-3.5 h-3.5 text-[#2E7D32]" />
-                        <span>Source: {src.title} (p. {src.page})</span>
-                      </span>
-                    ))}
-                  </div>
+                  <SourceCard sources={msg.sources} />
                 )}
 
                 {/* Safety Blocked Violation Card */}
@@ -379,7 +381,8 @@ export const AssistantPage: React.FC = () => {
                 {msg.isUncertaintyRefusal && !msg.isSafetyBlocked && (
                   <UncertaintyCard
                     query={msg.userQuery || 'Ungrounded policy inquiry'}
-                    similarityScore={msg.confidence || 0.54}
+                    similarityScore={msg.confidence || 0.42}
+                    departmentContact={msg.departmentContact}
                   />
                 )}
 

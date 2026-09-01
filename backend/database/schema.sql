@@ -141,6 +141,25 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Immutable Audit Logs PostgreSQL Trigger (Prohibits UPDATE & DELETE)
+CREATE OR REPLACE FUNCTION enforce_audit_logs_immutability()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'UPDATE' THEN
+        RAISE EXCEPTION 'Immutable Audit Policy Violation: UPDATE operations are strictly prohibited on audit_logs.';
+    ELSIF TG_OP = 'DELETE' THEN
+        RAISE EXCEPTION 'Immutable Audit Policy Violation: DELETE operations are strictly prohibited on audit_logs.';
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_audit_logs_immutable ON audit_logs;
+CREATE TRIGGER trg_audit_logs_immutable
+BEFORE UPDATE OR DELETE ON audit_logs
+FOR EACH ROW
+EXECUTE FUNCTION enforce_audit_logs_immutability();
+
 CREATE TABLE IF NOT EXISTS notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,

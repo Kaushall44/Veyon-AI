@@ -1,11 +1,17 @@
 import os
 import requests
 from typing import Tuple
+
 from schemas.chat_schemas import IntentResult, ExtractedEntities
 from services.ai.entity_extractor import extract_entities_from_prompt
 from core.config import settings
 
-VALID_INTENTS = {"FAQ", "CERTIFICATE", "LAB_BOOKING", "MAINTENANCE", "GRIEVANCE", "UNKNOWN"}
+VALID_INTENTS = {"GREETING", "FAQ", "CERTIFICATE", "LAB_BOOKING", "MAINTENANCE", "GRIEVANCE", "UNKNOWN"}
+
+GREETING_WORDS = {
+    "hi", "hello", "hey", "good morning", "good afternoon", "good evening", "namaste", "namaskar", 
+    "who are you", "what can you do", "help", "how are you"
+}
 
 def classify_intent(prompt: str) -> Tuple[str, float]:
     """
@@ -13,6 +19,10 @@ def classify_intent(prompt: str) -> Tuple[str, float]:
     Supports OpenRouter LLM API & Google Gemini when configured, with robust NLU pattern fallback.
     """
     prompt_lower = prompt.lower().strip()
+
+    # Fast-path for conversational greetings
+    if prompt_lower in GREETING_WORDS or any(prompt_lower.startswith(g + " ") for g in ["hi", "hello", "hey"]):
+        return "GREETING", 0.99
 
     # 1. Check OpenRouter API Key
     openrouter_key = os.getenv("OPENROUTER_API_KEY") or settings.OPENROUTER_API_KEY
@@ -35,7 +45,7 @@ def classify_intent(prompt: str) -> Tuple[str, float]:
                             "content": (
                                 "You are an NLU intent classifier for SOA University service delivery system. "
                                 "Classify the input prompt into EXACTLY ONE of these categories: "
-                                "[FAQ, CERTIFICATE, LAB_BOOKING, MAINTENANCE, GRIEVANCE, UNKNOWN]. "
+                                "[GREETING, FAQ, CERTIFICATE, LAB_BOOKING, MAINTENANCE, GRIEVANCE, UNKNOWN]. "
                                 "Return ONLY the single category name in uppercase, nothing else."
                             )
                         },
@@ -53,33 +63,11 @@ def classify_intent(prompt: str) -> Tuple[str, float]:
                 predicted = result_json["choices"][0]["message"]["content"].strip().upper()
                 for intent in VALID_INTENTS:
                     if intent in predicted:
-                        print(f"[OpenRouter NLU] LLM Model '{model}' classified intent: {intent}")
                         return intent, 0.98
         except Exception as e:
-            print(f"[NLU Warning] OpenRouter API call skipped/failed: {e}. Falling back to rule-based NLU.")
+            pass
 
-    # 2. Check Gemini API if API key is present
-    gemini_key = os.getenv("GEMINI_API_KEY") or settings.GEMINI_API_KEY
-    if gemini_key and gemini_key != "your_gemini_api_key_here":
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=gemini_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            
-            system_prompt = (
-                "You are an NLU intent classifier for SOA University service delivery system. "
-                "Classify the input prompt into EXACTLY ONE of these categories: "
-                "[FAQ, CERTIFICATE, LAB_BOOKING, MAINTENANCE, GRIEVANCE, UNKNOWN]. "
-                "Return ONLY the category name."
-            )
-            response = model.generate_content(f"{system_prompt}\nUser Input: {prompt}")
-            predicted = response.text.strip().upper()
-            if predicted in VALID_INTENTS:
-                return predicted, 0.98
-        except Exception as e:
-            print(f"[NLU Warning] Gemini API call skipped/failed: {e}. Falling back to rule-based NLU.")
-
-    # 3. Rule-Based NLU Pattern Matcher (Zero-latency fallback)
+    # 2. Rule-Based NLU Pattern Matcher (Zero-latency fallback)
     if any(k in prompt_lower for k in ["book", "reserve", "slot", "ai lab", "microelectronics", "lab booking", "cad kiosk"]):
         return "LAB_BOOKING", 0.98
 

@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { Clock, ShieldAlert, CheckCircle2, AlertTriangle, Flame, ShieldCheck } from 'lucide-react';
 
 interface SLACountdownTimerProps {
   createdAt?: string;
   slaHours?: number;
   isEscalated?: boolean;
+  onEscalate?: () => void;
+  status?: string;
 }
 
 export const SLACountdownTimer: React.FC<SLACountdownTimerProps> = ({
   slaHours = 48,
   isEscalated = false,
+  onEscalate,
+  status = 'UNDER_REVIEW'
 }) => {
-  const [timeLeft, setTimeLeft] = useState({ hours: 47, minutes: 59, seconds: 30 });
+  // Simulate active 48-hour countdown (e.g. 47 hours, 48 mins, 20s remaining)
+  const [timeLeft, setTimeLeft] = useState({
+    hours: isEscalated ? 0 : 47,
+    minutes: isEscalated ? 0 : 48,
+    seconds: isEscalated ? 0 : 20,
+  });
 
   useEffect(() => {
+    if (isEscalated || status === 'RESOLVED') return;
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev.seconds > 0) {
@@ -22,52 +33,104 @@ export const SLACountdownTimer: React.FC<SLACountdownTimerProps> = ({
           return { ...prev, minutes: 59, seconds: 59 };
         } else if (prev.hours > 0) {
           return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        } else {
+          if (onEscalate) onEscalate();
+          return { hours: 0, minutes: 0, seconds: 0 };
         }
-        return prev;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isEscalated, status, onEscalate]);
 
-  const percentageRemaining = Math.max(0, Math.min(100, (timeLeft.hours / slaHours) * 100));
+  const percentageRemaining = isEscalated
+    ? 0
+    : Math.max(0, Math.min(100, ((timeLeft.hours * 3600 + timeLeft.minutes * 60 + timeLeft.seconds) / (slaHours * 3600)) * 100));
 
   return (
-    <div className="bg-slate-900 text-white rounded-2xl p-5 border border-slate-700 shadow-card space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-          <Clock className="w-4 h-4 text-red-400 animate-pulse" />
-          <span>Institutional SLA Resolution Guarantee</span>
+    <div className="bg-[#152E22] text-white rounded-3xl p-6 sm:p-7 border border-[#234937] shadow-card space-y-4 text-left">
+      {/* Header Badge */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+        <div className="flex items-center gap-2 text-xs font-bold text-emerald-200">
+          <Clock className="w-4 h-4 text-emerald-400 animate-pulse shrink-0" />
+          <span>Institutional 48-Hour SLA Redressal Clock</span>
         </div>
-        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-          isEscalated
-            ? 'bg-red-500/20 text-red-300 border-red-500/40'
-            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-        }`}>
-          {isEscalated ? 'ESCALATED TO VICE CHANCELLOR' : `${slaHours}-Hour SLA Active`}
+        <span
+          className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border flex items-center gap-1.5 ${
+            isEscalated
+              ? 'bg-red-500/30 text-red-200 border-red-400 animate-pulse'
+              : status === 'RESOLVED'
+              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+              : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+          }`}
+        >
+          {isEscalated ? (
+            <>
+              <Flame className="w-3 h-3 text-red-400" />
+              <span>ESCALATED TO VICE-CHANCELLOR</span>
+            </>
+          ) : status === 'RESOLVED' ? (
+            <>
+              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              <span>SLA COMPLIED &amp; RESOLVED</span>
+            </>
+          ) : (
+            `${slaHours}-Hour Institutional SLA Active`
+          )}
         </span>
       </div>
 
+      {/* Digits Display */}
       <div className="flex items-baseline justify-between">
-        <div className="font-mono text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-400">
-          {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
+        <div>
+          {isEscalated ? (
+            <div className="font-mono text-2xl sm:text-3xl font-extrabold tracking-tight text-red-400">
+              00h : 00m : 00s (OVERDUE)
+            </div>
+          ) : (
+            <div className="font-mono text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-400">
+              {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m :{' '}
+              {String(timeLeft.seconds).padStart(2, '0')}s
+            </div>
+          )}
+          <span className="text-[11px] text-[#8C9C92] font-medium block mt-0.5">
+            {isEscalated
+              ? 'Institutional SLA breached: Escalated to Executive Ombudsman'
+              : 'Time remaining before automated Vice-Chancellor escalation'}
+          </span>
         </div>
-        <span className="text-[11px] text-slate-400 font-medium">Time Remaining</span>
       </div>
 
-      {/* SLA Progress Bar */}
-      <div className="space-y-1">
-        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+      {/* Progress Bar */}
+      <div className="space-y-1.5">
+        <div className="w-full h-2.5 bg-black/40 rounded-full overflow-hidden border border-white/10">
           <div
-            className="h-full bg-emerald-500 transition-all duration-1000"
-            style={{ width: `${percentageRemaining}%` }}
+            className={`h-full transition-all duration-1000 ${
+              isEscalated ? 'bg-red-500 w-full' : 'bg-gradient-to-r from-emerald-400 to-[#A5D6A7]'
+            }`}
+            style={{ width: isEscalated ? '100%' : `${percentageRemaining}%` }}
           />
         </div>
-        <div className="flex justify-between text-[10px] text-slate-400">
-          <span>Submitted</span>
-          <span>Auto-Escalation Deadline (48 Hours)</span>
+        <div className="flex justify-between text-[10px] text-[#8C9C92] font-semibold">
+          <span>Submitted (0h)</span>
+          <span className={isEscalated ? 'text-red-400 font-bold' : ''}>
+            {isEscalated ? 'Escalation Triggered' : 'Auto-Escalation Deadline (48 Hours)'}
+          </span>
         </div>
+      </div>
+
+      {/* Security Guarantee Note */}
+      <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-white/90">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span className="text-[11px] text-[#A5D6A7]">
+            Cryptographic Anonymity Mask: <strong>Salted SHA-256 (AES-256-GCM)</strong>
+          </span>
+        </div>
+        <span className="text-[10px] text-white/60 font-mono">Zero-Leak Guarantee</span>
       </div>
     </div>
   );
 };
+
+export default SLACountdownTimer;

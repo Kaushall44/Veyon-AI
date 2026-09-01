@@ -15,7 +15,11 @@ import {
   ChevronRight,
   Lock,
   Clock,
-  ShieldCheck
+  ShieldCheck,
+  Cpu,
+  Wrench,
+  HelpCircle,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -30,169 +34,228 @@ export const ServicesDirectoryPage: React.FC = () => {
     navigate('/assistant', { state: { initialPrompt: query } });
   };
 
+  const handleTagClick = (tag: string) => {
+    navigate('/assistant', { state: { initialPrompt: tag } });
+  };
+
   const serviceCategories = [
     {
-      id: 'admissions',
-      title: 'Admissions',
-      subtitle: 'Programs, eligibility, applications',
-      icon: GraduationCap,
-      iconBg: 'bg-[#E8F1FF] text-[#2563EB]',
-      target: '/services/lab-booking',
-    },
-    {
-      id: 'academics',
-      title: 'Academics',
-      subtitle: 'Courses, exams, academic records',
-      icon: BookOpen,
-      iconBg: 'bg-[#F3E8FF] text-[#9333EA]',
-      target: '/services/lab-booking',
-    },
-    {
-      id: 'finance',
-      title: 'Finance',
-      subtitle: 'Fees, refunds, scholarships',
-      icon: Wallet,
-      iconBg: 'bg-[#ECFDF5] text-[#059669]',
+      id: 'certificates',
+      title: 'Fee Structure & Bonafide Certificates',
+      subtitle: 'Official signed certificates for e-Kalyan, loan, or passport verification.',
+      badge: 'Instant / 1-Day',
+      icon: FileText,
+      iconBg: 'bg-[#E8F5E9] text-[#2E7D32]',
       target: '/services/certificate',
     },
     {
-      id: 'hostel',
-      title: 'Hostel',
-      subtitle: 'Allotment, leave, facilities',
-      icon: Building,
-      iconBg: 'bg-[#FFF7ED] text-[#EA580C]',
+      id: 'labs',
+      title: 'Advanced AI & GPU Lab Reservation',
+      subtitle: 'Reserve 30 RTX 4090 & A100 workstations in Room C-204.',
+      badge: 'Fast-Track (CGPA ≥ 7.5)',
+      icon: Cpu,
+      iconBg: 'bg-[#E8EAF6] text-[#283593]',
+      target: '/services/lab-booking',
+    },
+    {
+      id: 'maintenance',
+      title: 'Campus Infrastructure & Maintenance',
+      subtitle: 'Hostel room fans, lab HVAC, lighting repairs with technician dispatch.',
+      badge: 'Auto-Dispatch',
+      icon: Wrench,
+      iconBg: 'bg-[#FFF8E1] text-[#E65100]',
       target: '/services/maintenance',
     },
     {
-      id: 'documents',
-      title: 'Documents',
-      subtitle: 'Certificates, transcripts, NOCs',
-      icon: FileText,
-      iconBg: 'bg-[#EFF6FF] text-[#1D4ED8]',
-      target: '/services/certificate',
-    },
-    {
       id: 'grievances',
-      title: 'Grievances',
-      subtitle: 'Report issues, track resolution',
+      title: 'Grievance Redressal & Anti-Ragging',
+      subtitle: 'Confidential encrypted complaints with mandatory 48-hour SLA resolution.',
+      badge: '48-Hour SLA Timer',
       icon: ShieldAlert,
-      iconBg: 'bg-[#FEF2F2] text-[#DC2626]',
+      iconBg: 'bg-[#FFEBEE] text-[#C62828]',
       target: '/services/grievance',
     },
     {
-      id: 'other',
-      title: 'Other Services',
-      subtitle: 'Transport, events, more',
+      id: 'finance',
+      title: 'Fee Payment & Accounts Verification',
+      subtitle: 'PNB Collect integration, official annual tuition fees & refund rules.',
+      badge: 'Accounts Section',
+      icon: Wallet,
+      iconBg: 'bg-[#E0F2F1] text-[#00695C]',
+      target: '/services/certificate',
+    },
+    {
+      id: 'academics',
+      title: 'Academic Regulations & Policies',
+      subtitle: 'Cohort-based course regulations, grading scales & promotion criteria.',
+      badge: '19 IQAC Policies',
+      icon: BookOpen,
+      iconBg: 'bg-[#F3E5F5] text-[#6A1B9A]',
+      target: '/documents',
+    },
+    {
+      id: 'admissions',
+      title: 'Admissions & SAAT Merit Info',
+      subtitle: '11 B.Tech engineering branches, MCA, BCA & document verification.',
+      badge: '2026 Catalog',
+      icon: GraduationCap,
+      iconBg: 'bg-[#E1F5FE] text-[#0277BD]',
+      target: '/documents',
+    },
+    {
+      id: 'all_requests',
+      title: 'All Student Requests & Approvals',
+      subtitle: 'Unified audit tracker for pending, under-review, and approved requests.',
+      badge: 'Live Status',
       icon: Grid,
-      iconBg: 'bg-[#F3F4F6] text-[#4B5563]',
+      iconBg: 'bg-[#EFECE3] text-[#152E22]',
       target: '/requests',
     },
   ];
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto font-sans text-[#1B231F] py-4">
-      {/* 1. Center Hero Greeting (Exact Match to Image 2) */}
-      <div className="text-center space-y-4 max-w-3xl mx-auto relative py-6">
-        <span className="text-xs font-semibold text-[#6B7280]">
-          Good evening, {user?.name ? user.name.split(' ')[0] : 'Kaushal'}.
-        </span>
-
-        <div className="relative inline-block">
-          {/* Blue Orbit Ring */}
-          <div className="absolute -inset-4 border border-[#2563EB]/30 rounded-full blur-xs animate-pulse pointer-events-none"></div>
-
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif-title font-bold text-[#1B231F] leading-tight relative z-10">
-            How can we help<br />
-            you <span className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] bg-clip-text text-transparent">today?</span>
+    <div className="space-y-8 max-w-7xl mx-auto font-sans text-[#1B231F] text-left">
+      {/* 1. Official Institutional Banner */}
+      <div className="bg-[#152E22] text-white rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/20 uppercase tracking-widest flex items-center gap-1.5">
+              <Grid className="w-3.5 h-3.5 text-[#E8F5E9]" /> SOA ITER Service Directory
+            </span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-serif-title font-bold text-white leading-tight">
+            Institutional Services & Resource Hub
           </h1>
+          <p className="text-[#8C9C92] text-xs font-medium max-w-2xl leading-relaxed">
+            One-stop central gateway for laboratory bookings, official certificates, infrastructure maintenance, academic circulars, and grievance redressal at Siksha 'O' Anusandhan.
+          </p>
         </div>
 
-        {/* Centered Search Box */}
-        <form onSubmit={handleSearchSubmit} className="pt-4 max-w-2xl mx-auto space-y-3">
-          <div className="bg-white border-2 border-[#2563EB]/40 rounded-full p-2 pl-6 flex items-center justify-between shadow-lg shadow-[#2563EB]/5 hover:border-[#2563EB] transition-all">
+        <button
+          onClick={() => navigate('/assistant', { state: { initialPrompt: 'Show me available university services and how to apply.' } })}
+          className="px-5 py-2.5 rounded-full bg-white text-[#152E22] hover:bg-[#FAF8F3] text-xs font-bold shadow-xs transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+        >
+          <Sparkles className="w-4 h-4 text-[#152E22]" />
+          <span>Ask AI Assistant</span>
+        </button>
+      </div>
+
+      {/* 2. Natural Language AI Prompt Bar */}
+      <div className="bg-white rounded-3xl border border-[#EAE7DF] p-6 sm:p-8 shadow-xs space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-xl sm:text-2xl font-serif-title font-bold text-[#1B231F]">
+            State your requirement in your own words.
+          </h2>
+          <p className="text-xs text-[#5A6E63]">
+            Our AI Agent will automatically extract the intent, verify prerequisite eligibility, and route it to the designated dean or lab in-charge.
+          </p>
+        </div>
+
+        <form onSubmit={handleSearchSubmit} className="space-y-3">
+          <div className="bg-white border border-[#D9D5C7] rounded-full p-2 pl-5 flex items-center justify-between shadow-xs hover:border-[#152E22] focus-within:border-[#152E22] transition-all">
             <div className="flex items-center gap-3 flex-1">
-              <Sparkles className="w-5 h-5 text-[#2563EB]" />
+              <Search className="w-4 h-4 text-[#8C9C92]" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Describe your request in your own words..."
-                className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#1B231F] placeholder-[#9CA3AF] outline-none"
+                placeholder='e.g. "I want to reserve the AI Lab for tomorrow" or "Apply for a Bonafide Certificate"'
+                className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#1B231F] placeholder-[#8C9C92] outline-none"
               />
             </div>
             <button
               type="submit"
-              className="w-11 h-11 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white flex items-center justify-center transition-transform hover:scale-105 cursor-pointer shrink-0 shadow-md"
+              className="w-10 h-10 rounded-full bg-[#152E22] hover:bg-[#1E3A2B] text-white flex items-center justify-center transition-transform hover:scale-105 cursor-pointer shrink-0"
             >
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
           {/* Quick Tag Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[#4B5563]">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-[#4A5D52] pt-1">
             <button
               type="button"
-              onClick={() => setSearchInput('Check application status')}
-              className="px-4 py-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#2563EB] shadow-2xs transition-all"
+              onClick={() => handleTagClick('Book AI Lab tomorrow from 2 PM to 4 PM')}
+              className="px-4 py-2 rounded-full bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all"
             >
-              Check application status
+              ⚡ Book GPU Lab Slot
             </button>
             <button
               type="button"
-              onClick={() => setSearchInput('Request a document')}
-              className="px-4 py-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#2563EB] shadow-2xs transition-all"
+              onClick={() => handleTagClick('Request a Bonafide Certificate for my passport application')}
+              className="px-4 py-2 rounded-full bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all"
             >
-              Request a document
+              📄 Request Bonafide Certificate
             </button>
             <button
               type="button"
-              onClick={() => setSearchInput('File a grievance')}
-              className="px-4 py-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#2563EB] shadow-2xs transition-all"
+              onClick={() => handleTagClick('AC leaking in C-Block Room 204')}
+              className="px-4 py-2 rounded-full bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all"
             >
-              File a grievance
+              🔧 Report Campus Issue
             </button>
             <button
               type="button"
-              onClick={() => setSearchInput('Track my request')}
-              className="px-4 py-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#2563EB] shadow-2xs transition-all"
+              onClick={() => handleTagClick('Submit a confidential grievance')}
+              className="px-4 py-2 rounded-full bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all"
             >
-              Track my request
+              🛡️ File Confidential Grievance
             </button>
           </div>
         </form>
       </div>
 
-      {/* 2. Explore Services Grid (7 Horizontal Cards - Exact Match to Image 2) */}
-      <div className="space-y-4 text-left">
+      {/* 3. Service Catalogs Grid (8 Primary University Desks) */}
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-[#1B231F]">Explore services</h2>
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#5A6E63] block">
+              CAMPUS DIRECTORY
+            </span>
+            <h2 className="text-xl font-serif-title font-bold text-[#1B231F]">
+              Explore University Service Desks
+            </h2>
+          </div>
           <button
             onClick={() => navigate('/requests')}
-            className="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-[#152E22] hover:underline flex items-center gap-1"
           >
-            View all services <ArrowRight className="w-3.5 h-3.5" />
+            Track All Requests <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {serviceCategories.map((cat) => {
             const Icon = cat.icon;
             return (
               <div
                 key={cat.id}
                 onClick={() => navigate(cat.target)}
-                className="bg-white rounded-2xl border border-[#E5E7EB] p-4 hover:border-[#2563EB] shadow-2xs hover:shadow-md transition-all cursor-pointer flex items-center gap-3.5 group"
+                className="bg-white rounded-3xl border border-[#EAE7DF] p-5 hover:border-[#152E22] shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-4 group text-left"
               >
-                <div className={`w-11 h-11 rounded-2xl ${cat.iconBg} flex items-center justify-center shrink-0`}>
-                  <Icon className="w-5 h-5" />
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className={`w-10 h-10 rounded-2xl ${cat.iconBg} flex items-center justify-center shrink-0`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FAF8F3] border border-[#E5E2D9] text-[#5A6E63]">
+                      {cat.badge}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-sm text-[#1B231F] group-hover:text-[#152E22] transition-colors">
+                      {cat.title}
+                    </h3>
+                    <p className="text-[11px] text-[#5A6E63] mt-1 leading-relaxed">
+                      {cat.subtitle}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-0.5">
-                  <h3 className="font-bold text-xs text-[#1B231F] group-hover:text-[#2563EB] transition-colors">
-                    {cat.title}
-                  </h3>
-                  <p className="text-[10px] text-[#6B7280] leading-snug">
-                    {cat.subtitle}
-                  </p>
+
+                <div className="pt-2 border-t border-[#FAF8F3] flex items-center justify-between text-xs font-bold text-[#152E22]">
+                  <span>Access Desk</span>
+                  <ChevronRight className="w-4 h-4 text-[#8C9C92] group-hover:text-[#152E22] group-hover:translate-x-1 transition-all" />
                 </div>
               </div>
             );
@@ -200,138 +263,153 @@ export const ServicesDirectoryPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Two Column Workspace Grid: Recent Activity & Service Status (Exact Match to Image 2) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-left">
-        {/* Left Card: Your recent activity */}
-        <div className="bg-white rounded-3xl border border-[#E5E7EB] p-6 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-3">
-            <h3 className="font-bold text-xs text-[#1B231F]">Your recent activity</h3>
-            <button onClick={() => navigate('/requests')} className="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1">
-              View all <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {/* Row 1 */}
-            <div
-              onClick={() => navigate('/requests')}
-              className="p-3.5 rounded-2xl bg-[#F9FAFB] border border-[#F3F4F6] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between gap-3 group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-[#1B231F] group-hover:text-[#2563EB]">Transcript Request</h4>
-                  <p className="text-[10px] text-[#6B7280]">Records Office</p>
-                </div>
+      {/* 4. Two-Column Workspace: Live Institutional Health & Quick Policies */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Card: Active Request Status (Span 6) */}
+        <div className="lg:col-span-6 bg-white rounded-3xl border border-[#EAE7DF] p-6 shadow-xs space-y-4 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-[#EAE7DF] pb-3">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#152E22]" />
+                <h3 className="font-bold text-[#1B231F] text-xs uppercase tracking-wider">
+                  RECENT SERVICE ACTIVITY
+                </h3>
               </div>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB]">
-                  In Progress
-                </span>
-                <span className="text-[#9CA3AF] text-[10px] font-mono">23 Aug, 2026</span>
-                <ChevronRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#2563EB]" />
-              </div>
+              <button
+                onClick={() => navigate('/requests')}
+                className="text-xs font-bold text-[#152E22] hover:underline flex items-center gap-1"
+              >
+                View all <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
 
-            {/* Row 2 */}
-            <div
-              onClick={() => navigate('/services/certificate')}
-              className="p-3.5 rounded-2xl bg-[#F9FAFB] border border-[#F3F4F6] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between gap-3 group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] text-[#059669] flex items-center justify-center shrink-0">
-                  <FileText className="w-4 h-4" />
+            <div className="space-y-3">
+              {/* Row 1: Lab Booking */}
+              <div
+                onClick={() => navigate('/services/lab-booking')}
+                className="p-3.5 rounded-2xl bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all cursor-pointer flex items-center justify-between gap-3 group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-[#E0DDD2] text-[#152E22] flex items-center justify-center shrink-0">
+                    <Cpu className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#1B231F] group-hover:text-[#152E22]">
+                      AI Lab Reservation (Room C-204)
+                    </h4>
+                    <p className="text-[11px] text-[#5A6E63]">Tomorrow, 14:00 - 16:00</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-xs text-[#1B231F] group-hover:text-[#2563EB]">Bonafide Certificate</h4>
-                  <p className="text-[10px] text-[#6B7280]">Academic Section</p>
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F5E9] text-[#2E7D32]">
+                    Confirmed
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#8C9C92] group-hover:text-[#152E22]" />
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8FF] text-[#9333EA]">
-                  Under Review
-                </span>
-                <span className="text-[#9CA3AF] text-[10px] font-mono">21 Aug, 2026</span>
-                <ChevronRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#2563EB]" />
-              </div>
-            </div>
 
-            {/* Row 3 */}
-            <div
-              onClick={() => navigate('/requests')}
-              className="p-3.5 rounded-2xl bg-[#F9FAFB] border border-[#F3F4F6] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between gap-3 group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center shrink-0">
-                  <Building className="w-4 h-4" />
+              {/* Row 2: Bonafide */}
+              <div
+                onClick={() => navigate('/services/certificate')}
+                className="p-3.5 rounded-2xl bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all cursor-pointer flex items-center justify-between gap-3 group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-[#E0DDD2] text-[#152E22] flex items-center justify-center shrink-0">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#1B231F] group-hover:text-[#152E22]">
+                      Bonafide Certificate PDF
+                    </h4>
+                    <p className="text-[11px] text-[#5A6E63]">Academic Section</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-xs text-[#1B231F] group-hover:text-[#2563EB]">Hostel Allotment</h4>
-                  <p className="text-[10px] text-[#6B7280]">Hostel Office</p>
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8EAF6] text-[#283593]">
+                    Under Review
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#8C9C92] group-hover:text-[#152E22]" />
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F3F4F6] text-[#6B7280]">
-                  Closed
-                </span>
-                <span className="text-[#9CA3AF] text-[10px] font-mono">18 Aug, 2026</span>
-                <ChevronRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#2563EB]" />
+
+              {/* Row 3: Maintenance */}
+              <div
+                onClick={() => navigate('/services/maintenance')}
+                className="p-3.5 rounded-2xl bg-[#FAF8F3] border border-[#E5E2D9] hover:border-[#152E22] transition-all cursor-pointer flex items-center justify-between gap-3 group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-[#E0DDD2] text-[#152E22] flex items-center justify-center shrink-0">
+                    <Wrench className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#1B231F] group-hover:text-[#152E22]">
+                      Classroom AC Service Order
+                    </h4>
+                    <p className="text-[11px] text-[#5A6E63]">Estates Department</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFF8E1] text-[#E65100]">
+                    Dispatched
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#8C9C92] group-hover:text-[#152E22]" />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Card: Service status */}
-        <div className="bg-white rounded-3xl border border-[#E5E7EB] p-6 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-3">
-            <h3 className="font-bold text-xs text-[#1B231F]">Service status</h3>
-            <span className="text-[11px] font-bold text-[#059669] flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse"></span>
-              All systems operational
-            </span>
-          </div>
+        {/* Right Card: Institutional System Health (Span 6) */}
+        <div className="lg:col-span-6 bg-white rounded-3xl border border-[#EAE7DF] p-6 shadow-xs space-y-4 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-[#EAE7DF] pb-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#152E22]" />
+                <h3 className="font-bold text-[#1B231F] text-xs uppercase tracking-wider">
+                  CAMPUS SERVICE STATUS
+                </h3>
+              </div>
+              <span className="text-[11px] font-bold text-[#2E7D32] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#2E7D32] animate-pulse"></span>
+                All Systems Operational
+              </span>
+            </div>
 
-          <div className="space-y-2">
-            {[
-              { name: 'Admissions', icon: GraduationCap },
-              { name: 'Academics', icon: BookOpen },
-              { name: 'Finance', icon: Wallet },
-              { name: 'Hostel', icon: Building },
-              { name: 'Documents', icon: FileText },
-              { name: 'Grievances', icon: ShieldAlert },
-            ].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={i}
-                  className="p-2.5 rounded-xl border border-transparent hover:border-[#E5E7EB] hover:bg-[#F9FAFB] transition-all flex items-center justify-between gap-3 text-xs"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-[#F3F4F6] text-[#4B5563] flex items-center justify-center">
-                      <Icon className="w-3.5 h-3.5" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { name: 'GPU Lab C-204 Workstations', status: '25/30 Free', icon: Cpu },
+                { name: 'Certificate PDF Engine', status: 'Active (Dean Seal)', icon: FileText },
+                { name: 'Estates Work Order Dispatch', status: 'Normal SLA', icon: Wrench },
+                { name: '48-Hr Grievance Gateway', status: 'Encrypted Queue', icon: ShieldAlert },
+                { name: 'PNB Collect Fee Integration', status: 'Synchronized', icon: Wallet },
+                { name: 'RAG Knowledge Retriever', status: '19 IQAC Policies', icon: BookOpen },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-2xl bg-[#FAF8F3] border border-[#E5E2D9] flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-7 h-7 rounded-xl bg-white border border-[#E0DDD2] text-[#152E22] flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="font-bold text-[#1B231F] truncate text-[11px]">{item.name}</span>
                     </div>
-                    <span className="font-bold text-[#1B231F]">{item.name}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-[11px] text-[#6B7280]">
-                    <span className="flex items-center gap-1 font-medium">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#059669]"></span> Operational
+                    <span className="text-[10px] font-bold text-[#2E7D32] shrink-0 bg-[#E8F5E9] px-2 py-0.5 rounded-full">
+                      {item.status}
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF]" />
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="pt-2 text-center text-[11px] font-medium text-[#5A6E63] flex items-center justify-center gap-1.5">
+            <Lock className="w-3.5 h-3.5 text-[#8C9C92]" />
+            <span>End-to-End Encrypted Institutional Service Bus</span>
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="text-center pt-4 text-xs font-semibold text-[#6B7280] flex items-center justify-center gap-2">
-        <Lock className="w-3.5 h-3.5" />
-        <span>Secure. Private. Built for students.</span>
       </div>
     </div>
   );

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Top Arc Path for SIKSHA 'O' ANUSANDHAN -->
+    <path id="top-arc" d="M 55,250 A 195,195 0 0,1 445,250" fill="none" />
+    <!-- Bottom Arc Path for (DEEMED TO BE UNIVERSITY) -->
+    <path id="bottom-arc" d="M 445,250 A 195,195 0 0,1 55,250" fill="none" />
+    <!-- Clip Path for center triangle -->
+    <clipPath id="center-clip">
+      <circle cx="250" cy="250" r="162" />
+    </clipPath>
+  </defs>
+
+  <!-- Outer Crimson Red Ring -->
+  <circle cx="250" cy="250" r="242" fill="#E11D48" />
+
+  <!-- Inner White Disc -->
+  <circle cx="250" cy="250" r="162" fill="#FFFFFF" />
+
+  <!-- Inner White Ring Stroke -->
+  <circle cx="250" cy="250" r="165" fill="none" stroke="#FFFFFF" stroke-width="4" />
+
+  <!-- Top Text: SIKSHA 'O' ANUSANDHAN -->
+  <text fill="#FFFFFF" font-family="'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="34" letter-spacing="4.5">
+    <textPath href="#top-arc" startOffset="50%" text-anchor="middle">
+      SIKSHA &apos;O&apos; ANUSANDHAN
+    </textPath>
+  </text>
+
+  <!-- Bottom Text: (DEEMED TO BE UNIVERSITY) -->
+  <text fill="#FFFFFF" font-family="'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="3.5">
+    <textPath href="#bottom-arc" startOffset="50%" text-anchor="middle">
+      (DEEMED TO BE UNIVERSITY)
+    </textPath>
+  </text>
+
+  <!-- Center Graphic Group (clipped to inner circle) -->
+  <g clip-path="url(#center-clip)">
+    <!-- Green Inverted Triangle -->
+    <polygon points="108,160 392,160 250,422" fill="#5EBA68" />
+
+    <!-- Red Ribbon / Swoosh crossing bottom right of triangle -->
+    <path d="M 250,422 L 285,385 C 330,345 375,300 420,270 C 400,340 340,400 250,422 Z" fill="#E11D48" />
+    <path d="M 85,160 C 130,230 180,310 250,422 C 242,400 230,360 215,320 Z" fill="#E11D48" opacity="0.9" />
+
+    <!-- White Eye Symbol inside Triangle -->
+    <!-- Upper Eye Lid Curve -->
+    <path d="M 160,255 Q 250,225 340,255" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <!-- Lower Eye Lid Curve -->
+    <path d="M 160,255 Q 250,305 340,255" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <!-- Upper Eye Contour Line -->
+    <path d="M 175,242 Q 250,215 325,242" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" />
+    
+    <!-- Central Pupil/Flame Loop -->
+    <path d="M 235,245 C 235,230 265,230 265,245 C 265,268 250,285 235,285 C 220,285 220,265 235,245 Z" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

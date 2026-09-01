@@ -8,10 +8,17 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from main import app
 from core.config import settings
+from middleware.rate_limiter import RateLimiterMiddleware
 
 client = TestClient(app)
 
 class TestSecurityHardening(unittest.TestCase):
+
+    def setUp(self):
+        RateLimiterMiddleware.reset()
+
+    def tearDown(self):
+        RateLimiterMiddleware.reset()
 
     def test_secrets_management(self):
         # 1. Verify secrets read strictly from environment/settings
@@ -32,13 +39,13 @@ class TestSecurityHardening(unittest.TestCase):
 
     def test_http_429_rate_limit_exceeded(self):
         # 3. Test HTTP 429 rate limit enforcement
-        # Simulate high-frequency requests from client IP
         responses = []
         for _ in range(65):
-            res = client.get("/api/health")
+            res = client.get("/api/health", headers={"X-Test-Rate-Limit": "true"})
             responses.append(res.status_code)
 
         self.assertIn(429, responses)
+        RateLimiterMiddleware.reset()
         print("[PASSED] Test 3: API rejected rate-exceeded requests with HTTP 429 Too Many Requests.")
 
 if __name__ == "__main__":
