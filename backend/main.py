@@ -21,7 +21,7 @@ from middleware.auth_middleware import JWTAuthMiddleware
 from middleware.rate_limiter import RateLimiterMiddleware
 from middleware.error_handler import register_exception_handlers
 
-from api.routers import auth, users, requests, chat, approvals, labs, certificates, maintenance, grievances, audit, notifications, knowledge, analytics
+from api.routers import auth, users, requests, chat, approvals, labs, certificates, maintenance, grievances, audit, notifications, knowledge, analytics, community, marketplace
 
 # Initialize FastAPI Application
 app = FastAPI(
@@ -62,6 +62,8 @@ app.include_router(audit.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
 app.include_router(knowledge.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
+app.include_router(community.router, prefix="/api")
+app.include_router(marketplace.router, prefix="/api")
 
 @app.get("/api/health", tags=["Health"])
 async def health_check():

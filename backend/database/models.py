@@ -279,3 +279,166 @@ class Notification(Base, TimestampMixin):
             "link_path": self.link_path,
             "timestamp": self.created_at.isoformat() if self.created_at else None,
         }
+
+# =========================================================================
+# 8. COMMUNITY FORUM MODELS (REDDIT / STACKOVERFLOW STYLE)
+# =========================================================================
+class CommunityPost(Base, TimestampMixin):
+    __tablename__ = "community_posts"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    title = Column(String(255), nullable=False)
+    content = Column(Text, nullable=False)
+    category = Column(String(64), index=True, nullable=False, default="ACADEMIC")  # 'ACADEMIC', 'CAREER', 'RESEARCH', 'CAMPUS_LIFE', 'ALUMNI_QA'
+    tags = Column(JSON, nullable=False, default=list)
+    author_id = Column(String(36), ForeignKey("users.id"), index=True, nullable=False)
+    author_name = Column(String(255), nullable=False)
+    author_role = Column(String(32), nullable=False, default="Student")
+    author_badge = Column(String(128), nullable=False, default="Verified Student")
+    upvotes = Column(Integer, nullable=False, default=0)
+    view_count = Column(Integer, nullable=False, default=0)
+    comment_count = Column(Integer, nullable=False, default=0)
+    accepted_comment_id = Column(String(36), nullable=True)
+
+    # Relationships
+    author = relationship("User", foreign_keys=[author_id])
+    comments = relationship("CommunityComment", back_populates="post", cascade="all, delete-orphan")
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "category": self.category,
+            "tags": self.tags or [],
+            "author_id": self.author_id,
+            "author_name": self.author_name,
+            "author_role": self.author_role,
+            "author_badge": self.author_badge,
+            "upvotes": self.upvotes,
+            "view_count": self.view_count,
+            "comment_count": self.comment_count,
+            "accepted_comment_id": self.accepted_comment_id,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+class CommunityComment(Base, TimestampMixin):
+    __tablename__ = "community_comments"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    post_id = Column(String(36), ForeignKey("community_posts.id"), index=True, nullable=False)
+    author_id = Column(String(36), ForeignKey("users.id"), index=True, nullable=False)
+    author_name = Column(String(255), nullable=False)
+    author_role = Column(String(32), nullable=False, default="Student")
+    author_badge = Column(String(128), nullable=False, default="Verified Student")
+    content = Column(Text, nullable=False)
+    upvotes = Column(Integer, nullable=False, default=0)
+    is_accepted = Column(Boolean, nullable=False, default=False)
+    parent_comment_id = Column(String(36), ForeignKey("community_comments.id"), nullable=True)
+
+    # Relationships
+    post = relationship("CommunityPost", back_populates="comments")
+    author = relationship("User", foreign_keys=[author_id])
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "post_id": self.post_id,
+            "author_id": self.author_id,
+            "author_name": self.author_name,
+            "author_role": self.author_role,
+            "author_badge": self.author_badge,
+            "content": self.content,
+            "upvotes": self.upvotes,
+            "is_accepted": self.is_accepted,
+            "parent_comment_id": self.parent_comment_id,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+class CommunityVote(Base):
+    __tablename__ = "community_votes"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), ForeignKey("users.id"), index=True, nullable=False)
+    target_id = Column(String(36), index=True, nullable=False)
+    target_type = Column(String(16), index=True, nullable=False)  # 'POST', 'COMMENT'
+    vote_value = Column(Integer, nullable=False, default=1)       # +1, -1
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    __table_args__ = (
+        Index("idx_user_target_vote", "user_id", "target_id", unique=True),
+    )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "target_id": self.target_id,
+            "target_type": self.target_type,
+            "vote_value": self.vote_value,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+# =========================================================================
+# 9. CAMPUS MARKETPLACE MODELS
+# =========================================================================
+class MarketplaceItem(Base, TimestampMixin):
+    __tablename__ = "marketplace_items"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=False)
+    price = Column(Numeric(10, 2), nullable=False)
+    category = Column(String(64), index=True, nullable=False)      # 'BOOKS', 'ELECTRONICS', 'CYCLES', 'LAB_GEAR', 'HOSTEL'
+    condition = Column(String(32), index=True, nullable=False, default="LIKE_NEW")  # 'BRAND_NEW', 'LIKE_NEW', 'GOOD', 'FAIR'
+    images = Column(JSON, nullable=False, default=list)
+    seller_id = Column(String(36), ForeignKey("users.id"), index=True, nullable=False)
+    seller_name = Column(String(255), nullable=False)
+    seller_reg_no = Column(String(64), index=True, nullable=False)
+    seller_phone = Column(String(32), nullable=True)
+    seller_location = Column(String(128), nullable=False, default="Campus Hostel")
+    status = Column(String(16), index=True, nullable=False, default="ACTIVE")  # 'ACTIVE', 'SOLD', 'RESERVED'
+    view_count = Column(Integer, nullable=False, default=0)
+
+    # Relationships
+    seller = relationship("User", foreign_keys=[seller_id])
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "price": float(self.price) if self.price else 0.0,
+            "category": self.category,
+            "condition": self.condition,
+            "images": self.images or [],
+            "seller_id": self.seller_id,
+            "seller_name": self.seller_name,
+            "seller_reg_no": self.seller_reg_no,
+            "seller_phone": self.seller_phone,
+            "seller_location": self.seller_location,
+            "status": self.status,
+            "view_count": self.view_count,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+class MarketplaceReport(Base, TimestampMixin):
+    __tablename__ = "marketplace_reports"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    item_id = Column(String(36), ForeignKey("marketplace_items.id"), index=True, nullable=False)
+    reporter_id = Column(String(36), ForeignKey("users.id"), index=True, nullable=False)
+    reason = Column(String(255), nullable=False)
+    status = Column(String(32), index=True, nullable=False, default="PENDING")  # 'PENDING', 'REVIEWED', 'DISMISSED'
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "item_id": self.item_id,
+            "reporter_id": self.reporter_id,
+            "reason": self.reason,
+            "status": self.status,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }

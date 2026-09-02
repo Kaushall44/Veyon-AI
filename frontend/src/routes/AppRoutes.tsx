@@ -18,6 +18,11 @@ import { MaintenancePage } from '../pages/services/MaintenancePage';
 import { StaffMaintenancePage } from '../pages/maintenance/StaffMaintenancePage';
 import { GrievancePage } from '../pages/services/GrievancePage';
 import { OfficerGrievancePage } from '../pages/grievances/OfficerGrievancePage';
+import { CommunityPage } from '../pages/community/CommunityPage';
+import { PostDetailPage } from '../pages/community/PostDetailPage';
+import { MarketplacePage } from '../pages/marketplace/MarketplacePage';
+import { ItemDetailPage } from '../pages/marketplace/ItemDetailPage';
+import { CommunityMarketplaceLayout } from '../components/layout/CommunityMarketplaceLayout';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -27,7 +32,21 @@ export const AppRoutes: React.FC = () => {
       <Route path="/landing" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Protected Main Application Shell */}
+      {/* Standalone Full-Page Dedicated Experience for Community & Marketplace */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <CommunityMarketplaceLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/community" element={<CommunityPage />} />
+        <Route path="/community/:postId" element={<PostDetailPage />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/marketplace/:itemId" element={<ItemDetailPage />} />
+      </Route>
+
+      {/* Protected Main Application Dashboard Shell */}
       <Route
         element={
           <ProtectedRoute>

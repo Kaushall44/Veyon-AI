@@ -223,3 +223,89 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id, is_read);
+
+-- ====================================================================
+-- 16. Community Forum (Reddit / StackOverflow style)
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS community_posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    category VARCHAR(64) NOT NULL DEFAULT 'ACADEMIC',
+    tags JSONB NOT NULL DEFAULT '[]'::jsonb,
+    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    author_name VARCHAR(255) NOT NULL,
+    author_role VARCHAR(32) NOT NULL DEFAULT 'Student',
+    author_badge VARCHAR(128) NOT NULL DEFAULT 'Verified Student',
+    upvotes INT NOT NULL DEFAULT 0,
+    view_count INT NOT NULL DEFAULT 0,
+    comment_count INT NOT NULL DEFAULT 0,
+    accepted_comment_id UUID,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_community_posts_category ON community_posts(category);
+CREATE INDEX IF NOT EXISTS idx_community_posts_author ON community_posts(author_id);
+CREATE INDEX IF NOT EXISTS idx_community_posts_upvotes ON community_posts(upvotes DESC);
+
+CREATE TABLE IF NOT EXISTS community_comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,
+    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    author_name VARCHAR(255) NOT NULL,
+    author_role VARCHAR(32) NOT NULL DEFAULT 'Student',
+    author_badge VARCHAR(128) NOT NULL DEFAULT 'Verified Student',
+    content TEXT NOT NULL,
+    upvotes INT NOT NULL DEFAULT 0,
+    is_accepted BOOLEAN NOT NULL DEFAULT FALSE,
+    parent_comment_id UUID REFERENCES community_comments(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_community_comments_post ON community_comments(post_id);
+
+CREATE TABLE IF NOT EXISTS community_votes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_id UUID NOT NULL,
+    target_type VARCHAR(16) NOT NULL,
+    vote_value INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_user_target_vote UNIQUE (user_id, target_id)
+);
+
+-- ====================================================================
+-- 17. Campus Marketplace
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS marketplace_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    price NUMERIC(10, 2) NOT NULL,
+    category VARCHAR(64) NOT NULL,
+    condition VARCHAR(32) NOT NULL DEFAULT 'LIKE_NEW',
+    images JSONB NOT NULL DEFAULT '[]'::jsonb,
+    seller_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    seller_name VARCHAR(255) NOT NULL,
+    seller_reg_no VARCHAR(64) NOT NULL,
+    seller_phone VARCHAR(32),
+    seller_location VARCHAR(128) NOT NULL DEFAULT 'Campus Hostel',
+    status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
+    view_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_marketplace_items_category ON marketplace_items(category);
+CREATE INDEX IF NOT EXISTS idx_marketplace_items_status ON marketplace_items(status);
+CREATE INDEX IF NOT EXISTS idx_marketplace_items_seller ON marketplace_items(seller_id);
+
+CREATE TABLE IF NOT EXISTS marketplace_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    item_id UUID NOT NULL REFERENCES marketplace_items(id) ON DELETE CASCADE,
+    reporter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reason VARCHAR(255) NOT NULL,
+    status VARCHAR(32) NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);

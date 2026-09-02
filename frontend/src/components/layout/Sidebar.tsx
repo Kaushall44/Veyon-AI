@@ -13,6 +13,8 @@ import {
   Bot,
   Wrench,
   Scale,
+  MessageSquare,
+  ShoppingBag,
   Database
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -39,6 +41,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
     { label: 'Home', path: '/dashboard', icon: Home },
     { label: 'AI Assistant', path: '/assistant', icon: Bot },
     { label: 'My Requests', path: '/requests', icon: Clock },
+    { label: 'Veyon Community', path: '/community', icon: MessageSquare },
+    { label: 'Campus Marketplace', path: '/marketplace', icon: ShoppingBag },
     { label: 'Services Directory', path: '/services', icon: Grid },
     { label: 'Certificates & NOC', path: '/services/certificate', icon: FileText },
     { label: 'Lab Booking', path: '/services/lab-booking', icon: Grid },
