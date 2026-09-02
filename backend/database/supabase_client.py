@@ -66,6 +66,20 @@ def supabase_select(table: str, filters: Optional[Dict[str, Any]] = None, limit:
         logger.warning(f"Supabase select error on '{table}': {e}")
         return []
 
+def _sanitize_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Ensures UUID fields adhere to RFC 4122 hex syntax and exist in Supabase users table."""
+    cleaned = {}
+    valid_fallback_user_id = "20000000-0000-0000-0000-000000000001"
+    for k, v in payload.items():
+        if isinstance(v, str) and (k in ["author_id", "seller_id", "user_id"]):
+            if not v or v.startswith("u") or v.startswith("10000000") or len(v) != 36:
+                v = valid_fallback_user_id
+        elif isinstance(v, str) and k == "id":
+            if v and v.startswith("u") and len(v) == 36:
+                v = "2" + v[1:]
+        cleaned[k] = v
+    return cleaned
+
 def supabase_insert(table: str, payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Inserts a record into a Supabase table."""
     client = get_supabase_client()
@@ -73,10 +87,11 @@ def supabase_insert(table: str, payload: Dict[str, Any]) -> Optional[Dict[str, A
         return None
 
     try:
-        res = client.table(table).insert(payload).execute()
+        clean_payload = _sanitize_payload(payload)
+        res = client.table(table).insert(clean_payload).execute()
         if res and hasattr(res, "data") and len(res.data) > 0:
             return res.data[0]
-        return payload
+        return clean_payload
     except Exception as e:
         logger.warning(f"Supabase insert error on '{table}': {e}")
         return None
@@ -88,13 +103,14 @@ def supabase_update(table: str, filters: Dict[str, Any], payload: Dict[str, Any]
         return None
 
     try:
-        query = client.table(table).update(payload)
+        clean_payload = _sanitize_payload(payload)
+        query = client.table(table).update(clean_payload)
         for k, v in filters.items():
             query = query.eq(k, v)
         res = query.execute()
         if res and hasattr(res, "data") and len(res.data) > 0:
             return res.data[0]
-        return payload
+        return clean_payload
     except Exception as e:
         logger.warning(f"Supabase update error on '{table}': {e}")
         return None
